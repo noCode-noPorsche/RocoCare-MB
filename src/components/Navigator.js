@@ -122,6 +122,9 @@ function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
         // options={{
         //   headerLeft: () => (
         //     <Ionicons
