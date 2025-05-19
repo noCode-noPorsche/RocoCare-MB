@@ -6,12 +6,30 @@ import LogoutIcon from "../assets/logout.svg";
 import QuestionIcon from "../assets/question.svg";
 import SettingIcon from "../assets/setting.svg";
 import LockIcon from "../assets/lock.svg";
-import ArrowRightIcon from "../assets/arrow-right.svg";
+import ArrowRightIcon from "../assets/arrow_right.svg";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import { useNavigation } from "@react-navigation/native";
+import ActionSheet from "react-native-actionsheet";
+import { useRef } from "react";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+
+  const actionSheetRef = useRef();
+
+  const showActionSheet = () => {
+    actionSheetRef.current.show();
+  };
+
+  const handlePress = (index) => {
+    if (index === 0) {
+      // Xác nhận
+      console.log("Confirmed");
+    } else if (index === 1) {
+      // Huỷ
+      console.log("Cancelled");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,7 +64,7 @@ export default function ProfileScreen() {
             <View style={styles.iconButton}>
               <ProfileIcon width={20} height={20} />
             </View>
-            <Text style={styles.textFeature}>Hồ Sơ</Text>
+            <Text style={styles.textFeature}>Chỉnh Sửa Hồ Sơ</Text>
             <ArrowRightIcon width={14} height={14} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -79,13 +97,24 @@ export default function ProfileScreen() {
             <Text style={styles.textFeature}>Trợ Giúp</Text>
             <ArrowRightIcon width={14} height={14} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonProfile}>
+          <TouchableOpacity
+            style={styles.buttonProfile}
+            onPress={showActionSheet}
+          >
             <View style={styles.iconButton}>
               <LogoutIcon width={20} height={20} />
             </View>
             <Text style={styles.textFeature}>Đăng Xuất</Text>
             <ArrowRightIcon width={14} height={14} />
           </TouchableOpacity>
+          <ActionSheet
+            ref={actionSheetRef}
+            title={"Bạn có chắc muốn xoá?"}
+            options={["Xác nhận", "Huỷ"]}
+            cancelButtonIndex={1}
+            destructiveButtonIndex={0}
+            onPress={handlePress}
+          />
         </View>
       </View>
     </SafeAreaView>

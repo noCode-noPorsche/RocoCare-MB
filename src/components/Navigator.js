@@ -11,6 +11,9 @@ import EditProfileScreen from "../screens/EditProfileScreen";
 import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 import SettingScreen from "../screens/SettingScreen";
 import HelpScreen from "../screens/HelpScreen";
+import SettingNotificationScreen from "../screens/SettingNotificationScreen";
+import ManagePasswordScreen from "../screens/ManagePasswordScreen";
+import EmergencySettingScreen from "../screens/EmergencySettingScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -173,64 +176,66 @@ function ProfileStack() {
       <Stack.Screen
         name="EditProfile"
         component={EditProfileScreen}
-        options={
-          {
-            // headerShown: false,
-          }
-        }
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="PrivacyPolicy"
         component={PrivacyPolicyScreen}
-        options={
-          {
-            // headerShown: false,
-          }
-        }
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="Setting"
-        component={SettingScreen}
-        options={
-          {
-            // headerShown: false,
-          }
-        }
+        component={SettingStack}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="Help"
         component={HelpScreen}
-        options={
-          {
-            // headerShown: false,
-          }
-        }
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );
 }
 
-// function HomeStack() {
-//   const navigation = useNavigation();
-
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen
-//         name="Home"
-//         component={HomeScreen}
-//         options={{
-//           headerLeft: () => (
-//             <Ionicons
-//               name="menu"
-//               size={30}
-//               style={{ marginLeft: 10 }}
-//               onPress={() => navigation.openDrawer()}
-//             />
-//           ),
-//         }}
-//       />
-//       <Stack.Screen name="Products" component={ProductScreen} />
-//       <Stack.Screen name="Details" component={DetailScreen} />
-//     </Stack.Navigator>
-//   );
-// }
+function SettingStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Setting"
+        component={SettingScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SettingNotification"
+        component={SettingNotificationScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ManagePassword"
+        component={ManagePasswordScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EmergencySetting"
+        component={EmergencySettingScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
