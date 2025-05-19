@@ -185,13 +185,14 @@ const styles = StyleSheet.create({
   },
   buttonHealth: {
     display: "flex",
+    flex: 1,
     flexDirection: "column",
     justifyContent: "space-evenly",
+    flex: 1,
     gap: 8,
     backgroundColor: "#CAD6FF",
     borderRadius: 12,
     padding: 12,
-    width: 200,
     height: 150,
   },
   viewTextHealth: {

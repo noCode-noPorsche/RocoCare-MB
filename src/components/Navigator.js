@@ -7,6 +7,10 @@ import HomeScreen from "../screens/HomeScreen";
 import MedicalRecordScreen from "../screens/MedicalRecordScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
+import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
+import SettingScreen from "../screens/SettingScreen";
+import HelpScreen from "../screens/HelpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -159,7 +163,49 @@ function MedicalRecordStack() {
 function ProfileStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={
+          {
+            // headerShown: false,
+          }
+        }
+      />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={
+          {
+            // headerShown: false,
+          }
+        }
+      />
+      <Stack.Screen
+        name="Setting"
+        component={SettingScreen}
+        options={
+          {
+            // headerShown: false,
+          }
+        }
+      />
+      <Stack.Screen
+        name="Help"
+        component={HelpScreen}
+        options={
+          {
+            // headerShown: false,
+          }
+        }
+      />
     </Stack.Navigator>
   );
 }
