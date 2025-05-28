@@ -6,18 +6,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "react-native-vector-icons";
-import SearchIcon from "../assets/search_icon.svg";
-import MHRIcon from "../assets/cardiology.svg";
 import BPIcon from "../assets/blood_pressure.svg";
-import SPo2Icon from "../assets/spo2.svg";
-import CameraIcon from "../assets/camera_video.svg";
 import CalendarIcon from "../assets/calendar.svg";
+import CameraIcon from "../assets/camera_video.svg";
+import MHRIcon from "../assets/cardiology.svg";
+import SearchIcon from "../assets/search_icon.svg";
+import SPo2Icon from "../assets/spo2.svg";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewCustom>
       <View style={styles.viewHeader}>
         <View style={styles.viewInformation}>
           <View>
@@ -105,18 +105,11 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewHeader: {
     display: "flex",
     flexDirection: "row",

@@ -1,14 +1,14 @@
-import { StyleSheet, Switch, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import HeaderShown from "../components/HeaderShown";
 import { useState } from "react";
+import { StyleSheet, Switch, Text, View } from "react-native";
+import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function SettingNotificationScreen() {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Cài Đặt Thông Báo"} />
       <View>
         <View style={styles.viewSwitch}>
@@ -42,18 +42,11 @@ export default function SettingNotificationScreen() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewSwitch: {
     display: "flex",
     flexDirection: "row",

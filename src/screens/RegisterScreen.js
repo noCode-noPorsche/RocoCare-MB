@@ -1,5 +1,11 @@
-import { Text } from "react-native";
-
+import { StyleSheet, Text } from "react-native";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 export default function RegisterScreen() {
-  return <Text>RegisterScreen</Text>;
+  return (
+    <SafeAreaViewCustom>
+      <Text>RegisterScreen</Text>
+    </SafeAreaViewCustom>
+  );
 }
+
+const styles = StyleSheet.create({});

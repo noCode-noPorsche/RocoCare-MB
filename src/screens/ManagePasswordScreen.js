@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -5,17 +6,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import HeaderShown from "../components/HeaderShown";
-import { useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function ManagePasswordScreen() {
   const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Quản Lý Mật Khẩu"} />
       <View style={styles.viewMangePassword}>
         <View style={styles.viewMangeInputPassword}>
@@ -95,18 +95,11 @@ export default function ManagePasswordScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewMangePassword: {
     display: "flex",
     height: "100%",

@@ -1,16 +1,16 @@
+import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ArrowRightIcon from "../assets/arrow_right";
 import CallIcon from "../assets/call.svg";
 import KeyIcon from "../assets/key.svg";
 import LightIcon from "../assets/light.svg";
-import { useNavigation } from "@react-navigation/native";
 import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function SettingScreen() {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Cài Đặt"} />
       <View style={styles.viewButtonProfile}>
         <TouchableOpacity
@@ -44,18 +44,11 @@ export default function SettingScreen() {
           <ArrowRightIcon width={14} height={14} />
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewButtonProfile: {
     display: "flex",
     flexDirection: "column",

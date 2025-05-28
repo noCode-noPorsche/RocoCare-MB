@@ -9,10 +9,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderShown from "../components/HeaderShown";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function EditProfileScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Chỉnh Sửa Hồ Sơ"} />
       <View style={styles.viewProfile}>
         <View style={styles.viewAvatar}>
@@ -85,18 +86,11 @@ export default function EditProfileScreen() {
           <Text style={styles.textEditProfile}>Cập Nhật</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewProfile: {
     display: "flex",
     justifyContent: "center",

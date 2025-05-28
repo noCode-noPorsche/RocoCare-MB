@@ -1,5 +1,10 @@
 import { Text } from "react-native";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function NotificationScreen() {
-  return <Text>NotificationScreen</Text>;
+  return (
+    <SafeAreaViewCustom>
+      <Text>NotificationScreen</Text>
+    </SafeAreaViewCustom>
+  );
 }

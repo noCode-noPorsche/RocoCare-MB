@@ -25,6 +25,7 @@ export default function ProfileScreen() {
     if (index === 0) {
       // Xác nhận
       console.log("Confirmed");
+      navigation.navigate("Login");
     } else if (index === 1) {
       // Huỷ
       console.log("Cancelled");
