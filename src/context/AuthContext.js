@@ -5,7 +5,7 @@ const AuthContext = createContext();
 export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(null);
 
   const login = (userData) => {
     setUser(userData); // Ví dụ: userData = { name: "Dustin", token: "abc123" }
