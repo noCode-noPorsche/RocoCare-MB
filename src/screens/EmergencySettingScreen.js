@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function EmergencySettingScreen() {
   return (

@@ -3,9 +3,11 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import RoboCareLogo from "../assets/robocare_blue.svg";
 import { useNavigation } from "@react-navigation/native";
 import GoogleLogo from "../assets/google.svg";
+import { useAuth } from "../context/AuthContext";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
+  const { login } = useAuth();
   return (
     <SafeAreaViewCustom>
       <View style={styles.viewWelcome}>
@@ -20,7 +22,7 @@ export default function WelcomeScreen() {
 
           <TouchableOpacity
             style={styles.buttonLogin}
-            onPress={() => navigation.navigate("Register")}
+            onPress={() => login(true)}
           >
             <View style={styles.viewGoogleText}>
               <GoogleLogo width={20} height={20} />

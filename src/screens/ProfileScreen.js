@@ -11,10 +11,10 @@ import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import { useNavigation } from "@react-navigation/native";
 import ActionSheet from "react-native-actionsheet";
 import { useRef } from "react";
-
+import { useAuth } from "../context/AuthContext";
 export default function ProfileScreen() {
   const navigation = useNavigation();
-
+  const { logout } = useAuth();
   const actionSheetRef = useRef();
 
   const showActionSheet = () => {
@@ -25,7 +25,8 @@ export default function ProfileScreen() {
     if (index === 0) {
       // Xác nhận
       console.log("Confirmed");
-      navigation.navigate("Login");
+      logout();
+      // navigation.navigate("Login");
     } else if (index === 1) {
       // Huỷ
       console.log("Cancelled");

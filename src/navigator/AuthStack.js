@@ -16,7 +16,7 @@ function AuthStack() {
         }}
       />
       <Stack.Screen
-        name="Login"
+        name="Home"
         component={LoginScreen}
         options={{
           headerShown: false,
