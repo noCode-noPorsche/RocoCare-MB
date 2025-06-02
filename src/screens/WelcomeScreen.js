@@ -2,7 +2,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import RoboCareLogo from "../assets/robocare_blue.svg";
 import { useNavigation } from "@react-navigation/native";
-import GoogleLogo from "../assets/google.svg";
 import { useAuth } from "../context/AuthContext";
 
 export default function WelcomeScreen() {
@@ -22,12 +21,15 @@ export default function WelcomeScreen() {
 
           <TouchableOpacity
             style={styles.buttonLogin}
-            onPress={() => login(true)}
+            onPress={() => navigation.navigate("Login")}
           >
-            <View style={styles.viewGoogleText}>
-              <GoogleLogo width={20} height={20} />
-              <Text style={styles.textButtonLogin}>Đăng nhập bằng Google</Text>
-            </View>
+            <Text style={styles.textButtonLogin}>Đăng Nhập</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonRegister}
+            onPress={() => navigation.navigate("Register")}
+          >
+            <Text style={styles.textButtonRegister}>Đăng Ký</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -60,21 +62,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
+  // buttonLogin: {
+  //   backgroundColor: "#CAD6FF",
+  //   width: "60%",
+  //   height: 50,
+  //   paddingHorizontal: 20,
+  //   borderRadius: 30,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   gap: 10,
+  // },
   buttonLogin: {
-    backgroundColor: "#CAD6FF",
-    width: "60%",
-    height: 50,
-    paddingHorizontal: 20,
+    backgroundColor: "#2260FF",
+    padding: 10,
     borderRadius: 30,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
+    width: "50%",
+    height: 50,
   },
-
+  buttonRegister: {
+    backgroundColor: "#CAD6FF",
+    width: "50%",
+    height: 50,
+    padding: 10,
+    borderRadius: 30,
+  },
   textButtonLogin: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  textButtonRegister: {
     color: "#2260FF",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -84,11 +105,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#1C253D",
     fontStyle: "italic",
-  },
-  viewGoogleText: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    justifyContent: "center",
   },
 });

@@ -13,35 +13,39 @@ export default function EmergencySettingScreen() {
     <SafeAreaViewCustom style={styles.container}>
       <HeaderShown HeaderName={"Cuộc Gọi Khẩn Cấp"} />
       <View style={styles.viewEmergencySetting}>
-        <View style={styles.viewInformationEmergencySetting}>
-          <Text style={styles.textEmergencySetting}>Thông tin người thân</Text>
-          <View style={styles.viewInputEmergencySetting}>
-            <Text style={styles.textInputProfile}>Họ Tên</Text>
-            <View style={styles.viewInputProfile}>
-              <TextInput placeholder="" style={styles.inputPassword} />
+        <View style={styles.viewEmergencySettingContent}>
+          <View style={styles.viewInformationEmergencySetting}>
+            <View style={styles.viewInputEmergencySetting}>
+              <Text style={styles.textEmergencySetting}>
+                Thông tin người thân
+              </Text>
+              <Text style={styles.textInputProfile}>Họ Tên</Text>
+              <View style={styles.viewInputProfile}>
+                <TextInput placeholder="" style={styles.inputPassword} />
+              </View>
+            </View>
+            <View style={styles.viewInputEmergencySetting}>
+              <Text style={styles.textInputProfile}>Số Điện Thoại</Text>
+              <View style={styles.viewInputProfile}>
+                <TextInput placeholder="" style={styles.inputPassword} />
+              </View>
             </View>
           </View>
-          <View style={styles.viewInputEmergencySetting}>
-            <Text style={styles.textInputProfile}>Số Điện Thoại</Text>
-            <View style={styles.viewInputProfile}>
-              <TextInput placeholder="" style={styles.inputPassword} />
+          <View style={styles.viewInformationEmergencySetting}>
+            <View style={styles.viewInputEmergencySetting}>
+              <Text style={styles.textEmergencySetting}>
+                Thông tin trung tâm y tế
+              </Text>
+              <Text style={styles.textInputProfile}>Họ Tên</Text>
+              <View style={styles.viewInputProfile}>
+                <TextInput placeholder="" style={styles.inputPassword} />
+              </View>
             </View>
-          </View>
-        </View>
-        <View style={styles.viewInformationEmergencySetting}>
-          <Text style={styles.textEmergencySetting}>
-            Thông tin trung tâm y tế
-          </Text>
-          <View style={styles.viewInputEmergencySetting}>
-            <Text style={styles.textInputProfile}>Họ Tên</Text>
-            <View style={styles.viewInputProfile}>
-              <TextInput placeholder="" style={styles.inputPassword} />
-            </View>
-          </View>
-          <View style={styles.viewInputEmergencySetting}>
-            <Text style={styles.textInputProfile}>Số Điện Thoại</Text>
-            <View style={styles.viewInputProfile}>
-              <TextInput placeholder="" style={styles.inputPassword} />
+            <View style={styles.viewInputEmergencySetting}>
+              <Text style={styles.textInputProfile}>Số Điện Thoại</Text>
+              <View style={styles.viewInputProfile}>
+                <TextInput placeholder="" style={styles.inputPassword} />
+              </View>
             </View>
           </View>
         </View>
@@ -59,24 +63,24 @@ const styles = StyleSheet.create({
   viewEmergencySetting: {
     display: "flex",
     flexDirection: "column",
-    // justifyContent: "space-between",
-    // alignContent: "flex-end",
-    gap: 20,
+    justifyContent: "space-between",
+    gap: 50,
+  },
+  viewEmergencySettingContent: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 50,
   },
   viewInformationEmergencySetting: {
     display: "flex",
     flexDirection: "column",
-    // gap: 10,
+    gap: 2,
   },
   textEmergencySetting: {
     fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
-  },
-  viewInputEmergencySetting: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
   },
   textInputProfile: {
     fontSize: 18,
@@ -98,10 +102,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   viewInputEmergencySetting: {
-    marginTop: 30,
+    marginTop: 10,
     display: "flex",
     flexDirection: "column",
-    gap: 22,
+    gap: 2,
   },
   viewButtonSaveEmergencySetting: {},
   buttonSaveEmergencySetting: {
@@ -116,19 +120,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     color: "#fff",
-  },
-  viewButtonSaveEmergencySetting: {},
-  buttonSaveEmergencySetting: {
-    backgroundColor: "#2260FF",
-    padding: 15,
-    margin: 20,
-    marginLeft: 80,
-    marginRight: 80,
-    borderRadius: 36,
-  },
-  textSaveEmergencySetting: {
-    fontSize: 18,
-    textAlign: "center",
-    color: "#fff",
+    fontWeight: "500",
   },
 });
