@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderShown from "../components/HeaderShown";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
@@ -122,7 +121,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ECF1FF",
     padding: 12,
     borderRadius: 12,
-
     paddingLeft: 30,
     paddingRight: 30,
     fontSize: 16,
@@ -139,7 +137,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2260FF",
     padding: 15,
     margin: 20,
-
     marginLeft: 80,
     marginRight: 80,
     borderRadius: 36,
