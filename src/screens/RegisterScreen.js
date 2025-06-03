@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#CAD6FF",
     padding: 12,
     borderRadius: 30,
-    height: 50,
     // width: "100%",
   },
   viewGoogleText: {
@@ -156,7 +155,6 @@ const styles = StyleSheet.create({
   },
   textRegister: {
     textAlign: "center",
-    marginTop: 20,
   },
   textRegisterLink: {
     color: "#2260FF",

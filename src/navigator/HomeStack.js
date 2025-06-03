@@ -1,5 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
+import NotificationScreen from "../screens/NotificationScreen";
+import SettingScreen from "../screens/SettingScreen";
+import SettingStack from "./SettingStack";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +26,20 @@ function HomeStack() {
         //     />
         //   ),
         // }}
+      />
+      <Stack.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Setting"
+        component={SettingStack}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );

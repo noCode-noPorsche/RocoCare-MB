@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "../assets/arrow_left";
 import { useNavigation } from "@react-navigation/native";
 
-export default function HeaderShown({ HeaderName }) {
+export default function HeaderShown({ HeaderName, iconBack = true }) {
   const navigation = useNavigation();
   return (
     <View style={styles.viewHeader}>
@@ -10,7 +10,7 @@ export default function HeaderShown({ HeaderName }) {
         onPress={() => navigation.goBack()}
         style={styles.iconHeaderBack}
       >
-        <ArrowLeftIcon width={20} heigh={20} />
+        {iconBack && <ArrowLeftIcon width={20} heigh={20} />}
       </TouchableOpacity>
       <Text style={styles.textHeader}>{HeaderName}</Text>
     </View>

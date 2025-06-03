@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   Image,
   StyleSheet,
@@ -8,14 +9,15 @@ import {
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import BPIcon from "../assets/blood_pressure.svg";
-import CalendarIcon from "../assets/calendar.svg";
 import CameraIcon from "../assets/camera_video.svg";
 import MHRIcon from "../assets/cardiology.svg";
 import SearchIcon from "../assets/search_icon.svg";
 import SPo2Icon from "../assets/spo2.svg";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import TextDate from "../components/TextDate";
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   return (
     <SafeAreaViewCustom>
       <View style={styles.viewHeader}>
@@ -35,10 +37,16 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.viewIcon}>
-          <TouchableOpacity style={styles.buttonIcon}>
+          <TouchableOpacity
+            style={styles.buttonIcon}
+            onPress={() => navigation.navigate("Notification")}
+          >
             <Ionicons name="notifications-outline" size={20} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonIcon}>
+          <TouchableOpacity
+            style={styles.buttonIcon}
+            onPress={() => navigation.navigate("Setting")}
+          >
             <Ionicons name="settings-outline" size={20} />
           </TouchableOpacity>
         </View>
@@ -61,10 +69,7 @@ export default function HomeScreen() {
               <MHRIcon width={30} height={30} />
               <Text style={styles.textHealthIndex}>190 bpm</Text>
             </View>
-            <View style={styles.viewCalendarHealth}>
-              <CalendarIcon width={14} height={14} />
-              <Text style={styles.textDate}>Chủ nhật, 18/5</Text>
-            </View>
+            <TextDate day="Chủ nhật" date="18/5" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonHealth}>
             <Text style={styles.textNameHealth}>Chỉ số huyết áp(BP)</Text>
@@ -72,10 +77,7 @@ export default function HomeScreen() {
               <BPIcon width={30} height={30} />
               <Text style={styles.textHealthIndex}>120/80 mmHg</Text>
             </View>
-            <View style={styles.viewCalendarHealth}>
-              <CalendarIcon width={14} height={14} />
-              <Text style={styles.textDate}>Chủ nhật, 18/5</Text>
-            </View>
+            <TextDate day="Chủ nhật" date="18/5" />
           </TouchableOpacity>
         </View>
         <View style={styles.viewButtonHealth}>
@@ -87,10 +89,7 @@ export default function HomeScreen() {
               <SPo2Icon width={30} height={30} />
               <Text style={styles.textHealthIndex}>95 - 100%</Text>
             </View>
-            <View style={styles.viewCalendarHealth}>
-              <CalendarIcon width={14} height={14} />
-              <Text style={styles.textDate}>Chủ nhật, 18/5</Text>
-            </View>
+            <TextDate day="Chủ nhật" date="18/5" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonHealth}>
             <Text style={styles.textNameHealth}>Camera RoboCare</Text>
@@ -98,10 +97,7 @@ export default function HomeScreen() {
               <CameraIcon width={30} height={30} />
               <Text style={styles.textHealthIndex}>Live</Text>
             </View>
-            <View style={styles.viewCalendarHealth}>
-              <CalendarIcon width={14} height={14} />
-              <Text style={styles.textDate}>Chủ nhật, 18/5</Text>
-            </View>
+            <TextDate day="Chủ nhật" date="18/5" />
           </TouchableOpacity>
         </View>
       </View>
@@ -202,17 +198,5 @@ const styles = StyleSheet.create({
   },
   textHealthIndex: {
     fontSize: 18,
-  },
-  viewCalendarHealth: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    gap: 4,
-  },
-  textDate: {
-    color: "#2260FF",
   },
 });

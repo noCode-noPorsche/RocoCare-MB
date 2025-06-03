@@ -1,11 +1,11 @@
-import { Text } from "react-native";
+import React from "react";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
 
-export default function NotificationScreen() {
+export default function DetailMedicalRecordScreen() {
   return (
     <SafeAreaViewCustom>
-      <HeaderShown HeaderName={"Thông Báo"} />
+      <HeaderShown title="Hồ sơ bệnh án" />
     </SafeAreaViewCustom>
   );
 }
