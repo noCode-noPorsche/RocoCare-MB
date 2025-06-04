@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MedicalRecordScreen from "../screens/MedicalRecordScreen";
 import DetailMedicalRecordScreen from "../screens/DetailMedicalRecordScreen";
+import SetMedicalRecordScreen from "../screens/SetMedicalRecordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,8 +16,15 @@ function MedicalRecordStack() {
         }}
       />
       <Stack.Screen
-        name="MedicalDetail"
+        name="DetailMedical"
         component={DetailMedicalRecordScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SetMedical"
+        component={SetMedicalRecordScreen}
         options={{
           headerShown: false,
         }}

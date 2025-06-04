@@ -10,8 +10,10 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
 import { useState } from "react";
 import TextDate from "../components/TextDate";
+import { useNavigation } from "@react-navigation/native";
 
 export default function MedicalRecordScreen() {
+  const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(0);
 
   const buttons = [
@@ -63,8 +65,50 @@ export default function MedicalRecordScreen() {
               </View>
               <View style={styles.viewContentMedicalRecordItemText}>
                 <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View>
-                  <TextDate day="Chủ nhật" date="18/5" />
+                <View style={styles.viewContentMedicalRecordItemTextDate}>
+                  <TextDate
+                    style={{
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                    }}
+                    day="Chủ nhật"
+                    date="18/5"
+                  />
+                  <TouchableOpacity
+                    style={styles.buttonDetailMedicalRecord}
+                    onPress={() => {
+                      navigation.navigate("DetailMedical");
+                    }}
+                  >
+                    <Text style={styles.textDetailMedicalRecord}>
+                      Chi Tiết{" "}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={styles.viewContentMedicalRecordItem}>
+              <View style={styles.viewContentMedicalRecordItemImage}>
+                <Image
+                  source={require("../assets/discovery.jpg")}
+                  style={styles.imageMedicalRecord}
+                />
+              </View>
+              <View style={styles.viewContentMedicalRecordItemText}>
+                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
+                <View style={styles.viewContentMedicalRecordItemTextDate}>
+                  <TextDate
+                    style={{
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                    }}
+                    day="Chủ nhật"
+                    date="18/5"
+                  />
                   <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
                     <Text style={styles.textDetailMedicalRecord}>
                       Chi Tiết{" "}
@@ -82,8 +126,17 @@ export default function MedicalRecordScreen() {
               </View>
               <View style={styles.viewContentMedicalRecordItemText}>
                 <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View>
-                  <TextDate day="Chủ nhật" date="18/5" />
+                <View style={styles.viewContentMedicalRecordItemTextDate}>
+                  <TextDate
+                    style={{
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                    }}
+                    day="Chủ nhật"
+                    date="18/5"
+                  />
                   <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
                     <Text style={styles.textDetailMedicalRecord}>
                       Chi Tiết{" "}
@@ -101,8 +154,17 @@ export default function MedicalRecordScreen() {
               </View>
               <View style={styles.viewContentMedicalRecordItemText}>
                 <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View>
-                  <TextDate day="Chủ nhật" date="18/5" />
+                <View style={styles.viewContentMedicalRecordItemTextDate}>
+                  <TextDate
+                    style={{
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                    }}
+                    day="Chủ nhật"
+                    date="18/5"
+                  />
                   <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
                     <Text style={styles.textDetailMedicalRecord}>
                       Chi Tiết{" "}
@@ -120,27 +182,17 @@ export default function MedicalRecordScreen() {
               </View>
               <View style={styles.viewContentMedicalRecordItemText}>
                 <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View>
-                  <TextDate day="Chủ nhật" date="18/5" />
-                  <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View>
-                  <TextDate day="Chủ nhật" date="18/5" />
+                <View style={styles.viewContentMedicalRecordItemTextDate}>
+                  <TextDate
+                    style={{
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                      paddingLeft: 8,
+                      paddingRight: 8,
+                    }}
+                    day="Chủ nhật"
+                    date="18/5"
+                  />
                   <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
                     <Text style={styles.textDetailMedicalRecord}>
                       Chi Tiết{" "}
@@ -151,6 +203,14 @@ export default function MedicalRecordScreen() {
             </View>
           </View>
         </ScrollView>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => {
+            navigation.navigate("SetMedical");
+          }}
+        >
+          <Text style={styles.floatingButtonText}>＋</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaViewCustom>
   );
@@ -173,7 +233,7 @@ const styles = StyleSheet.create({
     display: "flex",
     gap: 10,
     backgroundColor: "#CAD6FF",
-    padding: 10,
+    padding: 12,
     borderRadius: 36,
   },
   textMedicalRecord: {
@@ -183,6 +243,7 @@ const styles = StyleSheet.create({
   },
   buttonActive: {
     backgroundColor: "#2260FF",
+    display: "flex",
   },
   textActive: {
     color: "#fff",
@@ -219,11 +280,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 10,
   },
-  textMedicalRecord: {
-    color: "#2260FF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
   buttonDetailMedicalRecord: {
     backgroundColor: "#2260FF",
     paddingVertical: 6,
@@ -234,5 +290,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 100,
+    right: 0,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#2260FF",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 5,
+    zIndex: 999,
+  },
+  floatingButtonText: {
+    color: "#fff",
+    fontSize: 32,
+    lineHeight: 32,
+    fontWeight: "bold",
+  },
+  viewContentMedicalRecordItemTextDate: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
   },
 });

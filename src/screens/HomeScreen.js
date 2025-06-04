@@ -1,6 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import {
+  Alert,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,9 +17,32 @@ import SearchIcon from "../assets/search_icon.svg";
 import SPo2Icon from "../assets/spo2.svg";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
+import CallEmergencyIcon from "../assets/emergency_call.svg";
+import CalendarStrip from "../components/CalendarStrip";
+import TimeTableSchedule from "../components/TimeTableSchedule";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+
+  const showConfirmAlert = () => {
+    Alert.alert(
+      "Xác nhận",
+      "Bạn có chắc chắn muốn thực hiện hành động này?",
+      [
+        {
+          text: "Hủy",
+          onPress: () => console.log("Đã hủy"),
+          style: "cancel",
+        },
+        {
+          text: "Đồng ý",
+          onPress: () => console.log("Đã đồng ý"),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaViewCustom>
       <View style={styles.viewHeader}>
@@ -60,52 +85,75 @@ export default function HomeScreen() {
           <Ionicons name="mic-outline" size={20} color="#2260FF" />
         </TouchableOpacity>
       </View>
-      <View style={styles.viewCalendar}></View>
-      <View style={styles.viewHealthInformation}>
-        <View style={styles.viewButtonHealth}>
-          <TouchableOpacity style={styles.buttonHealth}>
-            <Text style={styles.textNameHealth}>Chỉ số nhịp tim (MHR)</Text>
-            <View style={styles.viewTextHealth}>
-              <MHRIcon width={30} height={30} />
-              <Text style={styles.textHealthIndex}>190 bpm</Text>
-            </View>
-            <TextDate day="Chủ nhật" date="18/5" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonHealth}>
-            <Text style={styles.textNameHealth}>Chỉ số huyết áp(BP)</Text>
-            <View style={styles.viewTextHealth}>
-              <BPIcon width={30} height={30} />
-              <Text style={styles.textHealthIndex}>120/80 mmHg</Text>
-            </View>
-            <TextDate day="Chủ nhật" date="18/5" />
-          </TouchableOpacity>
+      <ScrollView
+        vertical
+        showsVerticalScrollIndicator={false}
+        // contentContainerStyle={styles.viewCalendar}
+      >
+        <View style={styles.viewCalendar}>
+          <CalendarStrip timeTableSchedule={true} />
+          {/* <TimeTableSchedule /> */}
         </View>
-        <View style={styles.viewButtonHealth}>
-          <TouchableOpacity style={styles.buttonHealth}>
-            <Text style={styles.textNameHealth}>
-              Chỉ số Oxy trong máu (SpO2)
-            </Text>
-            <View style={styles.viewTextHealth}>
-              <SPo2Icon width={30} height={30} />
-              <Text style={styles.textHealthIndex}>95 - 100%</Text>
-            </View>
-            <TextDate day="Chủ nhật" date="18/5" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonHealth}>
-            <Text style={styles.textNameHealth}>Camera RoboCare</Text>
-            <View style={styles.viewTextHealth}>
-              <CameraIcon width={30} height={30} />
-              <Text style={styles.textHealthIndex}>Live</Text>
-            </View>
-            <TextDate day="Chủ nhật" date="18/5" />
-          </TouchableOpacity>
+        <View style={styles.viewHealthInformation}>
+          <View style={styles.viewButtonHealth}>
+            <TouchableOpacity style={styles.buttonHealth}>
+              <Text style={styles.textNameHealth}>Chỉ số nhịp tim (MHR)</Text>
+              <View style={styles.viewTextHealth}>
+                <MHRIcon width={30} height={30} />
+                <Text style={styles.textHealthIndex}>190 bpm</Text>
+              </View>
+              <TextDate day="Chủ nhật" date="18/5" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonHealth}>
+              <Text style={styles.textNameHealth}>Chỉ số huyết áp(BP)</Text>
+              <View style={styles.viewTextHealth}>
+                <BPIcon width={30} height={30} />
+                <Text style={styles.textHealthIndex}>120/80 mmHg</Text>
+              </View>
+              <TextDate day="Chủ nhật" date="18/5" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.viewButtonHealth}>
+            <TouchableOpacity style={styles.buttonHealth}>
+              <Text style={styles.textNameHealth}>
+                Chỉ số Oxy trong máu (SpO2)
+              </Text>
+              <View style={styles.viewTextHealth}>
+                <SPo2Icon width={30} height={30} />
+                <Text style={styles.textHealthIndex}>95 - 100%</Text>
+              </View>
+              <TextDate day="Chủ nhật" date="18/5" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonHealth}>
+              <Text style={styles.textNameHealth}>Camera RoboCare</Text>
+              <View style={styles.viewTextHealth}>
+                <CameraIcon width={30} height={30} />
+                <Text style={styles.textHealthIndex}>Live</Text>
+              </View>
+              <TextDate day="Chủ nhật" date="18/5" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          showConfirmAlert();
+        }}
+      >
+        <Text style={styles.floatingButtonText}>
+          <CallEmergencyIcon width={30} height={30} />
+        </Text>
+      </TouchableOpacity>
     </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
+  // viewContainer: {
+  //   padding: 0,
+  //   margin: 0,
+  // },
   viewHeader: {
     display: "flex",
     flexDirection: "row",
@@ -160,7 +208,9 @@ const styles = StyleSheet.create({
   },
   viewCalendar: {
     backgroundColor: "#CAD6FF",
-    height: 200,
+    marginBottom: 20,
+    // borderRadius: 12,
+    // height: 200,
   },
   viewHealthInformation: {
     display: "flex",
@@ -198,5 +248,28 @@ const styles = StyleSheet.create({
   },
   textHealthIndex: {
     fontSize: 18,
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 40,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 5,
+    zIndex: 999,
+  },
+  floatingButtonText: {
+    color: "#fff",
+    fontSize: 32,
+    lineHeight: 32,
+    fontWeight: "bold",
   },
 });
