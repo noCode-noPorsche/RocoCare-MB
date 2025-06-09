@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "541732867997",
+    "project_id": "robo-care",
+    "storage_bucket": "robo-care.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541732867997:android:566aa41411272641b6e974",
+        "android_client_info": {
+          "package_name": "com.robocare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "541732867997-ql1ghnoitol2b74l9voejh6kb7t6gc67.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.robocare",
+            "certificate_hash": "113b2a469b97395ac68138941d3f7de6826b7ecd"
+          }
+        },
+        {
+          "client_id": "541732867997-0eaai7ke94ii8kiplgmlvna1qpkgm2f6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHNMgQ8g2qyy6vTCfm6hHt-LZO2WvlVeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "541732867997-0eaai7ke94ii8kiplgmlvna1qpkgm2f6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "541732867997-4098ifi363taa70van0aullgl688nbjj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.robocare"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

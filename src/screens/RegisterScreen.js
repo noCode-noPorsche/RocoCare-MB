@@ -3,18 +3,15 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Checkbox } from "react-native-paper";
-import GoogleLogo from "../assets/google.svg";
+import GoogleSignIn from "../components/GoogleSignIn";
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState(false);
-
-  const { login } = useAuth();
 
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
@@ -69,19 +66,12 @@ export default function RegisterScreen() {
       <View style={styles.viewButton}>
         <TouchableOpacity
           style={styles.buttonRegister}
-          onPress={() => login(true)}
+          onPress={() => navigation.navigate("Home")}
         >
           <Text style={styles.textButtonRegister}>Đăng Ký</Text>
         </TouchableOpacity>
         <Text style={styles.textOr}>hoặc đăng ký với</Text>
-        <TouchableOpacity style={styles.buttonLoginGoogle}>
-          <View style={styles.viewGoogleText}>
-            <GoogleLogo width={20} height={20} />
-            <Text style={styles.textButtonLoginGoogle}>
-              Đăng nhập bằng Google
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <GoogleSignIn />
       </View>
       <Text style={styles.textRegister}>
         Bạn đã có tài khoản?{" "}
@@ -122,31 +112,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#2260FF",
     padding: 16,
     borderRadius: 36,
-    width: "60%",
+    width: "65%",
   },
   textButtonRegister: {
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 18,
-  },
-  buttonLoginGoogle: {
-    backgroundColor: "#CAD6FF",
-    padding: 12,
-    borderRadius: 30,
-    // width: "100%",
-  },
-  viewGoogleText: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    justifyContent: "center",
-  },
-  textButtonLoginGoogle: {
-    color: "#2260FF",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
   },
   textOr: {
     fontSize: 12,

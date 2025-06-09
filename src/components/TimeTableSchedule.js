@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
   dottedLine: {
     flex: 1,
     borderBottomWidth: 1,
-    borderStyle: "dotted",
+    // borderStyle: "dotted",
+    borderStyle: "solid",
     borderColor: "#2260FF",
   },
   appointmentContainer: {

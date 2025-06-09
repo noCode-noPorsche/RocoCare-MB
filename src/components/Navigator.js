@@ -1,17 +1,17 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useContext, useEffect, useState } from "react";
 import AuthStack from "../navigator/AuthStack";
 import MyBottomTabs from "../navigator/MyBottomTabs";
 import WaitingStack from "../navigator/WaitingStack";
+import { AppContext } from "../context/AppContext";
 
 const RootStack = createNativeStackNavigator();
 
 // const Drawer = createDrawerNavigator();
 
 export default function Navigator() {
-  const { user } = useAuth();
+  const { isAuthenticated } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -60,7 +60,7 @@ export default function Navigator() {
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isLoading ? (
           <RootStack.Screen name="Waiting" component={WaitingStack} />
-        ) : user ? (
+        ) : isAuthenticated ? (
           <RootStack.Screen name="Main" component={MyBottomTabs} />
         ) : (
           <RootStack.Screen name="Auth" component={AuthStack} />

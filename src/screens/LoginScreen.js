@@ -1,21 +1,22 @@
+import { useNavigation } from "@react-navigation/native";
+import { useContext, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import GoogleSignIn from "../components/GoogleSignIn";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useState } from "react";
-import GoogleLogo from "../assets/google.svg";
-import { useAuth } from "../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { AppContext } from "../context/AppContext";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  // const { isAuthenticated } = useContext(AppContext);
 
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
+
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Xin Chào"} />
@@ -45,19 +46,12 @@ export default function LoginScreen() {
         <View style={styles.viewButton}>
           <TouchableOpacity
             style={styles.buttonLogin}
-            onPress={() => login(true)}
+            // onPress={() => login(true)}
           >
             <Text style={styles.textButtonLogin}>Đăng Nhập</Text>
           </TouchableOpacity>
           <Text style={styles.textOr}>hoặc</Text>
-          <TouchableOpacity style={styles.buttonLoginGoogle}>
-            <View style={styles.viewGoogleText}>
-              <GoogleLogo width={20} height={20} />
-              <Text style={styles.textButtonLoginGoogle}>
-                Đăng nhập bằng Google
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <GoogleSignIn />
           <Text style={styles.textRegister}>
             Bạn chưa có tài khoản?{" "}
             <Text
@@ -112,28 +106,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#2260FF",
     padding: 16,
     borderRadius: 36,
-    width: "60%",
+    width: "65%",
   },
   textButtonLogin: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  buttonLoginGoogle: {
-    backgroundColor: "#CAD6FF",
-    padding: 14,
-    borderRadius: 30,
-    // width: "100%",
-  },
-  viewGoogleText: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    justifyContent: "center",
-  },
-  textButtonLoginGoogle: {
-    color: "#2260FF",
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",

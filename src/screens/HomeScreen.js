@@ -20,9 +20,12 @@ import TextDate from "../components/TextDate";
 import CallEmergencyIcon from "../assets/emergency_call.svg";
 import CalendarStrip from "../components/CalendarStrip";
 import TimeTableSchedule from "../components/TimeTableSchedule";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { profile } = useContext(AppContext);
 
   const showConfirmAlert = () => {
     Alert.alert(
@@ -50,15 +53,15 @@ export default function HomeScreen() {
           <View>
             <Image
               source={{
-                uri: "https://down-vn.img.susercontent.com/file/73d385bbc251f1b33423ef582593493b",
+                uri: profile.avatarUrl,
               }}
               alt=""
-              style={{ width: 50, height: 50 }}
+              style={{ width: 50, height: 50, borderRadius: 50 }}
             />
           </View>
           <View style={styles.viewTextInformation}>
             <Text>Chào bạn</Text>
-            <Text style={styles.textName}>Dustin</Text>
+            <Text style={styles.textName}>{profile.fullName}</Text>
           </View>
         </View>
         <View style={styles.viewIcon}>
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
   viewInformation: {
     display: "flex",
     flexDirection: "row",
-    gap: 5,
+    gap: 16,
   },
   textName: {
     fontSize: 16,
@@ -170,7 +173,8 @@ const styles = StyleSheet.create({
   },
   viewTextInformation: {
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
   },
   viewIcon: {
     display: "flex",

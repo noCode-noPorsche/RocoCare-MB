@@ -10,12 +10,12 @@ import ArrowRightIcon from "../assets/arrow_right.svg";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import { useNavigation } from "@react-navigation/native";
 import ActionSheet from "react-native-actionsheet";
-import { useRef } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useContext, useRef } from "react";
+import { AppContext } from "../context/AppContext";
 export default function ProfileScreen() {
   const navigation = useNavigation();
-  const { logout } = useAuth();
   const actionSheetRef = useRef();
+  const { reset, profile } = useContext(AppContext);
 
   const showActionSheet = () => {
     actionSheetRef.current.show();
@@ -25,8 +25,7 @@ export default function ProfileScreen() {
     if (index === 0) {
       // Xác nhận
       console.log("Confirmed");
-      logout();
-      // navigation.navigate("Login");
+      reset();
     } else if (index === 1) {
       // Huỷ
       console.log("Cancelled");
@@ -40,10 +39,10 @@ export default function ProfileScreen() {
         <View style={styles.viewAvatar}>
           <Image
             source={{
-              uri: "https://down-vn.img.susercontent.com/file/73d385bbc251f1b33423ef582593493b",
+              uri: profile.avatarUrl,
             }}
             alt=""
-            style={{ width: 100, height: 100 }}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
           />
           <UploadAvatarIcon
             width={22}
@@ -55,7 +54,7 @@ export default function ProfileScreen() {
             }}
           />
         </View>
-        <Text style={styles.textName}>Dustin</Text>
+        <Text style={styles.textName}>{profile.fullName}</Text>
       </View>
       <View>
         <View style={styles.viewButtonProfile}>
@@ -138,6 +137,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   textName: {
+    marginTop: 4,
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",

@@ -1,12 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
-import RoboCareLogo from "../assets/robocare_blue.svg";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../context/AuthContext";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import RoboCareLogo from "../assets/robocare_blue.svg";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
-  const { login } = useAuth();
   return (
     <SafeAreaViewCustom>
       <View style={styles.viewWelcome}>
