@@ -7,14 +7,45 @@ import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { AppContext } from "../context/AppContext";
+import { useMutation } from "@tanstack/react-query";
+import authApi from "../apis/AuthApi";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
-  // const { isAuthenticated } = useContext(AppContext);
+  const [formData, setFormData] = useState({
+    userNameOrEmail: "",
+    password: "",
+  });
+
+  const updateFormData = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+  const { setProfile, setIsAuthenticated } = useContext(AppContext);
 
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const loginAccountMutation = useMutation({
+    mutationFn: (body) => authApi.login(body),
+    onSuccess: (data) => {
+      console.log(data?.data.data);
+      setIsAuthenticated(true);
+      setProfile(data?.data.data.userResponse);
+    },
+    onError: (error) => {
+      console.log("error", error?.response?.data);
+      console.log("FULL ERROR >>>", JSON.stringify(error, null, 2));
+    },
+  });
+
+  const handleLogin = () => {
+    console.log(formData);
+    loginAccountMutation.mutate(formData);
   };
 
   return (
@@ -22,10 +53,17 @@ export default function LoginScreen() {
       <HeaderShown HeaderName={"Xin Chào"} />
       <View style={styles.viewLogin}>
         <View style={styles.viewLoginInput}>
-          <InputCustom placeholder="example@gmail.com" titleInput="Email" />
+          <InputCustom
+            placeholder="example@gmail.com"
+            titleInput="Email"
+            value={formData.userNameOrEmail}
+            onChangeText={(value) => updateFormData("userNameOrEmail", value)}
+          />
           <InputCustom
             placeholder="************"
             titleInput="Mật Khẩu"
+            value={formData.password}
+            onChangeText={(value) => updateFormData("password", value)}
             secureTextEntry={!showPassword}
             icon={
               <Ionicons
@@ -44,10 +82,7 @@ export default function LoginScreen() {
           </Text>
         </View>
         <View style={styles.viewButton}>
-          <TouchableOpacity
-            style={styles.buttonLogin}
-            // onPress={() => login(true)}
-          >
+          <TouchableOpacity style={styles.buttonLogin} onPress={handleLogin}>
             <Text style={styles.textButtonLogin}>Đăng Nhập</Text>
           </TouchableOpacity>
           <Text style={styles.textOr}>hoặc</Text>

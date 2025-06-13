@@ -3,8 +3,16 @@ import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import { useContext, useState } from "react";
+import { AppContext } from "../context/AppContext";
 
 export default function EditProfileScreen() {
+  const { profile } = useContext(AppContext);
+
+  const [fullName, setFullName] = useState(profile.fullName || "");
+  const [phone, setPhone] = useState(profile.phoneNumber || "");
+  const [email, setEmail] = useState(profile.email || "");
+  const [dob, setDob] = useState(profile.dateOfBirth || "");
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Chỉnh Sửa Hồ Sơ"} />
@@ -12,10 +20,10 @@ export default function EditProfileScreen() {
         <View style={styles.viewAvatar}>
           <Image
             source={{
-              uri: "https://down-vn.img.susercontent.com/file/73d385bbc251f1b33423ef582593493b",
+              uri: profile.avatarUrl,
             }}
             alt=""
-            style={{ width: 100, height: 100 }}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
           />
           <UploadAvatarIcon
             width={22}
@@ -29,10 +37,26 @@ export default function EditProfileScreen() {
         </View>
       </View>
       <View style={styles.viewEditProfile}>
-        <InputCustom placeholder="Họ Tên" titleInput="Họ Tên" />
-        <InputCustom placeholder="0909090909" titleInput="Số Điện Thoại" />
-        <InputCustom placeholder="example@gmail.com" titleInput="Email" />
-        <InputCustom placeholder="DD/MM/YYYY" titleInput="Ngày sinh" />
+        <InputCustom
+          placeholder="Họ Tên"
+          value={fullName}
+          titleInput="Họ Tên"
+        />
+        <InputCustom
+          placeholder="0909090909"
+          value={phone}
+          titleInput="Số Điện Thoại"
+        />
+        <InputCustom
+          placeholder="example@gmail.com"
+          value={email}
+          titleInput="Email"
+        />
+        <InputCustom
+          placeholder="DD/MM/YYYY"
+          value={dob}
+          titleInput="Ngày sinh"
+        />
       </View>
       <View style={styles.viewButtonEditProfile}>
         <TouchableOpacity style={styles.buttonEditProfile}>

@@ -1,17 +1,18 @@
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ProfileIcon from "../assets/profile.svg";
+import { useNavigation } from "@react-navigation/native";
+import { useContext, useRef } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ActionSheet from "react-native-actionsheet";
+import ArrowRightIcon from "../assets/arrow_right.svg";
+import LockIcon from "../assets/lock.svg";
 import LogoutIcon from "../assets/logout.svg";
+import ProfileIcon from "../assets/profile.svg";
 import QuestionIcon from "../assets/question.svg";
 import SettingIcon from "../assets/setting.svg";
-import LockIcon from "../assets/lock.svg";
-import ArrowRightIcon from "../assets/arrow_right.svg";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
-import { useNavigation } from "@react-navigation/native";
-import ActionSheet from "react-native-actionsheet";
-import { useContext, useRef } from "react";
+import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { AppContext } from "../context/AppContext";
+
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const actionSheetRef = useRef();
@@ -32,9 +33,37 @@ export default function ProfileScreen() {
     }
   };
 
+  const buttonItems = [
+    {
+      label: "Chỉnh Sửa Hồ Sơ",
+      icon: ProfileIcon,
+      onPress: () => navigation.navigate("EditProfile"),
+    },
+    {
+      label: "Chính Sách Bảo Mật",
+      icon: LockIcon,
+      onPress: () => navigation.navigate("PrivacyPolicy"),
+    },
+    {
+      label: "Cài Đặt",
+      icon: SettingIcon,
+      onPress: () => navigation.navigate("Setting"),
+    },
+    {
+      label: "Trợ Giúp",
+      icon: QuestionIcon,
+      onPress: () => navigation.navigate("Help"),
+    },
+    {
+      label: "Đăng Xuất",
+      icon: LogoutIcon,
+      onPress: showActionSheet,
+    },
+  ];
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.textProfile}>Hồ sơ</Text>
+    <SafeAreaViewCustom>
+      <HeaderShown HeaderName={"Hồ Sơ"} iconBack={false} />
       <View style={styles.viewProfile}>
         <View style={styles.viewAvatar}>
           <Image
@@ -58,56 +87,26 @@ export default function ProfileScreen() {
       </View>
       <View>
         <View style={styles.viewButtonProfile}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("EditProfile")}
-            style={styles.buttonProfile}
-          >
-            <View style={styles.iconButton}>
-              <ProfileIcon width={20} height={20} />
-            </View>
-            <Text style={styles.textFeature}>Chỉnh Sửa Hồ Sơ</Text>
-            <ArrowRightIcon width={14} height={14} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonProfile}
-            onPress={() => navigation.navigate("PrivacyPolicy")}
-          >
-            <View style={styles.iconButton}>
-              <LockIcon width={20} height={20} />
-            </View>
-            <Text style={styles.textFeature}>Chính Sách Bảo Mật</Text>
-            <ArrowRightIcon width={14} height={14} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonProfile}
-            onPress={() => navigation.navigate("Setting")}
-          >
-            <View style={styles.iconButton}>
-              <SettingIcon width={20} height={20} />
-            </View>
-            <Text style={styles.textFeature}>Cài Đặt</Text>
-            <ArrowRightIcon width={14} height={14} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonProfile}
-            onPress={() => navigation.navigate("Help")}
-          >
-            <View style={styles.iconButton}>
-              <QuestionIcon width={20} height={20} />
-            </View>
-            <Text style={styles.textFeature}>Trợ Giúp</Text>
-            <ArrowRightIcon width={14} height={14} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonProfile}
-            onPress={showActionSheet}
-          >
-            <View style={styles.iconButton}>
-              <LogoutIcon width={20} height={20} />
-            </View>
-            <Text style={styles.textFeature}>Đăng Xuất</Text>
-            <ArrowRightIcon width={14} height={14} />
-          </TouchableOpacity>
+          {buttonItems.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.buttonProfile}
+                onPress={item.onPress}
+              >
+                <View style={styles.iconButtonText}>
+                  <View style={styles.iconButton}>
+                    <IconComponent width={24} height={24} />
+                  </View>
+                  <Text style={styles.textFeature}>{item.label}</Text>
+                </View>
+
+                <ArrowRightIcon width={14} height={14} />
+              </TouchableOpacity>
+            );
+          })}
+
           <ActionSheet
             ref={actionSheetRef}
             title={"Bạn có chắc muốn xoá?"}
@@ -118,18 +117,11 @@ export default function ProfileScreen() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    gap: 20,
-  },
   viewProfile: {
     display: "flex",
     justifyContent: "center",
@@ -142,16 +134,11 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
-  textProfile: {
-    fontSize: 20,
-    color: "#2260FF",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
   viewButtonProfile: {
+    marginTop: 20,
     display: "flex",
     flexDirection: "column",
-    gap: 12,
+    gap: 18,
   },
   viewAvatar: {
     display: "flex",
@@ -173,13 +160,21 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     width: 30,
     height: 30,
-    padding: 12,
+    padding: 20,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
   textFeature: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "semibold",
+    textAlign: "center",
+  },
+  iconButtonText: {
+    display: "flex",
+    gap: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

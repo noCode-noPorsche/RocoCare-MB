@@ -15,28 +15,37 @@ export default function InputCustom({
   icon,
   onPressIconShowPassword,
   titleInput,
+  editable = true,
+  onPressInput,
 }) {
   return (
     <View style={styles.viewInputContainer}>
       <View style={styles.viewInputCustom}>
         <Text style={styles.textInputCustom}>{titleInput}</Text>
-        <View style={styles.viewInputTextCustom}>
-          <TextInput
-            placeholder={placeholder}
-            value={value}
-            onChangeText={onChangeText}
-            secureTextEntry={secureTextEntry}
-            style={styles.inputTextCustom}
-          />
-          {icon && (
-            <TouchableOpacity
-              style={styles.iconShowPassword}
-              onPress={onPressIconShowPassword}
-            >
-              {icon}
-            </TouchableOpacity>
-          )}
-        </View>
+        <TouchableOpacity
+          onPress={onPressInput}
+          activeOpacity={editable ? 1 : 0.7}
+        >
+          <View style={styles.viewInputTextCustom}>
+            <TextInput
+              placeholder={placeholder}
+              value={value}
+              onChangeText={onChangeText}
+              secureTextEntry={secureTextEntry}
+              style={styles.inputTextCustom}
+              editable={editable}
+              pointerEvents={editable ? "auto" : "none"}
+            />
+            {icon && (
+              <TouchableOpacity
+                style={styles.iconShowPassword}
+                onPress={onPressIconShowPassword}
+              >
+                {icon}
+              </TouchableOpacity>
+            )}
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
