@@ -12,16 +12,15 @@ class Http {
       },
     });
     this.instance.interceptors.request.use(
-      (config) => {
-        if (this.accessToken && config.headers) {
-          config.headers.authorization = this.accessToken;
-          return config;
+      async (config) => {
+        const token = await getAccessTokenFromLS();
+        console.log(token, "TokenHttp");
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
     // this.instance.interceptors.response.use((response) => {
     //   const { url } = response.config

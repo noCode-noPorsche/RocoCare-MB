@@ -12,6 +12,7 @@ import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import HeaderShown from "../components/HeaderShown";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { AppContext } from "../context/AppContext";
+import { getAccessTokenFromLS } from "../utils/auth";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -27,6 +28,8 @@ export default function ProfileScreen() {
       // Xác nhận
       console.log("Confirmed");
       reset();
+      const accessToken = getAccessTokenFromLS();
+      console.log("logout", accessToken);
     } else if (index === 1) {
       // Huỷ
       console.log("Cancelled");

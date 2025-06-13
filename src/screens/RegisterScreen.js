@@ -1,19 +1,26 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Checkbox } from "react-native-paper";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import authApi from "../apis/AuthApi";
+import GoogleSignIn from "../components/GoogleSignIn";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { Checkbox } from "react-native-paper";
-import GoogleSignIn from "../components/GoogleSignIn";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform, Modal, Pressable } from "react-native";
-import { formatDate } from "../utils/utils";
-import { Picker } from "@react-native-picker/picker";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { Gender } from "../constants/enum";
-import { useMutation } from "@tanstack/react-query";
-import authApi from "../apis/AuthApi";
+import { formatDate } from "../utils/utils";
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
@@ -147,17 +154,6 @@ export default function RegisterScreen() {
         </View>
         <View style={styles.genderPickerContainer}>
           <Text style={styles.genderLabel}>Giới tính</Text>
-          {/* <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={formData.gender}
-              onValueChange={(itemValue) => updateFormData("gender", itemValue)}
-              style={styles.picker}
-              dropdownIconColor="#333"
-            >
-              <Picker.Item label="Nam" value={Gender.Male} />
-              <Picker.Item label="Nữ" value={Gender.Female} />
-            </Picker>
-          </View> */}
           {Platform.OS === "android" ? (
             <Picker
               selectedValue={formData.gender}

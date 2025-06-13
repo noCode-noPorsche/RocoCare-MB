@@ -1,7 +1,3 @@
-import React from "react";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
-import HeaderShown from "../components/HeaderShown";
-import CalendarStrip from "../components/CalendarStrip";
 import {
   ScrollView,
   StyleSheet,
@@ -9,7 +5,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import CalendarStrip from "../components/CalendarStrip";
+import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function SetCalendarScreen() {
   return (

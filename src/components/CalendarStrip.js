@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
 import moment from "moment";
+import { useState } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import TimeTableSchedule from "./TimeTableSchedule";
 
-const CalendarStrip = ({ timeTableSchedule = false }) => {
+export default function CalendarStrip({ timeTableSchedule = false }) {
   const [selectedDate, setSelectedDate] = useState(
     moment().format("YYYY-MM-DD")
   );
@@ -53,9 +53,9 @@ const CalendarStrip = ({ timeTableSchedule = false }) => {
       {timeTableSchedule && <TimeTableSchedule selectedDate={selectedDate} />}
     </View>
   );
-};
+}
 
-export default CalendarStrip;
+// export default CalendarStrip;
 
 const styles = StyleSheet.create({
   container: {

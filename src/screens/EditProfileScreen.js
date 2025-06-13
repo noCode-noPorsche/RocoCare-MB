@@ -1,18 +1,82 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  Platform,
+  Pressable,
+} from "react-native";
 import UploadAvatarIcon from "../assets/upload_avatar.svg";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { Gender } from "../constants/enum";
+import { formatDate } from "../utils/utils";
+import { useMutation } from "@tanstack/react-query";
+import authApi from "../apis/AuthApi";
+import { useNavigation } from "expo-router";
 
 export default function EditProfileScreen() {
-  const { profile } = useContext(AppContext);
+  const { profile, setProfile } = useContext(AppContext);
+  const navigation = useNavigation();
 
-  const [fullName, setFullName] = useState(profile.fullName || "");
-  const [phone, setPhone] = useState(profile.phoneNumber || "");
-  const [email, setEmail] = useState(profile.email || "");
-  const [dob, setDob] = useState(profile.dateOfBirth || "");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showGenderPicker, setShowGenderPicker] = useState(false);
+
+  const [formData, setFormData] = useState({
+    fullName: profile.fullName,
+    phoneNumber: profile.phoneNumber,
+    email: profile.email,
+    dateOfBirth: profile.dateOfBirth
+      ? new Date(profile.dateOfBirth)
+      : new Date(),
+    gender: profile.gender,
+  });
+
+  const updateFormData = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDateChange = (_event, selectedDate) => {
+    console.log(selectedDate);
+    if (selectedDate) {
+      updateFormData("dateOfBirth", selectedDate);
+    } else {
+      setShowDatePicker(false);
+    }
+  };
+
+  const updateAccountMutation = useMutation({
+    mutationFn: (body) => authApi.update(body),
+    onSuccess: (data) => {
+      setProfile(data.data.data);
+      navigation.goBack();
+    },
+    onError: (error) => {
+      console.log("error", error?.response?.data);
+      console.log("FULL ERROR >>>", JSON.stringify(error, null, 2));
+    },
+  });
+
+  const handleUpdate = () => {
+    const updateFormData = {
+      fullName: formData.fullName,
+      phoneNumber: formData.phoneNumber,
+      dateOfBirth: formData.dateOfBirth,
+      gender: formData.gender,
+    };
+    updateAccountMutation.mutate(updateFormData);
+  };
+
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Chỉnh Sửa Hồ Sơ"} />
@@ -39,27 +103,135 @@ export default function EditProfileScreen() {
       <View style={styles.viewEditProfile}>
         <InputCustom
           placeholder="Họ Tên"
-          value={fullName}
           titleInput="Họ Tên"
+          value={formData.fullName}
+          onChangeText={(value) => updateFormData("fullName", value)}
         />
         <InputCustom
           placeholder="0909090909"
-          value={phone}
           titleInput="Số Điện Thoại"
+          value={formData.phoneNumber}
+          onChangeText={(value) => updateFormData("phoneNumber", value)}
         />
         <InputCustom
           placeholder="example@gmail.com"
-          value={email}
+          value={formData.email}
+          editable={false}
           titleInput="Email"
         />
-        <InputCustom
-          placeholder="DD/MM/YYYY"
-          value={dob}
-          titleInput="Ngày sinh"
-        />
+        <View style={styles.rowContainer}>
+          <View style={styles.datePickerContainer}>
+            <InputCustom
+              placeholder="DD/MM/YYYY"
+              titleInput="Ngày sinh"
+              value={formatDate(formData.dateOfBirth)}
+              editable={false}
+              onPressInput={() => setShowDatePicker(true)}
+            />
+          </View>
+          <View style={styles.genderPickerContainer}>
+            <Text style={styles.genderLabel}>Giới tính</Text>
+            {Platform.OS === "android" ? (
+              <Picker
+                selectedValue={formData.gender}
+                onValueChange={(itemValue) =>
+                  updateFormData("gender", itemValue)
+                }
+                style={styles.picker}
+                mode="dropdown"
+                dropdownIconColor="#333"
+              >
+                <Picker.Item label="Nam" value={Gender.Male} />
+                <Picker.Item label="Nữ" value={Gender.Female} />
+              </Picker>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.pickerWrapper}
+                  onPress={() => setShowGenderPicker(true)}
+                >
+                  <Text style={styles.pickerText}>
+                    {formData.gender === Gender.Male ? "Nam" : "Nữ"}
+                  </Text>
+                </TouchableOpacity>
+
+                <Modal
+                  visible={showGenderPicker}
+                  transparent
+                  animationType="slide"
+                >
+                  <View style={styles.modalContainer}>
+                    <View style={styles.pickerContainer}>
+                      <View style={styles.modalHeader}>
+                        <Pressable onPress={() => setShowGenderPicker(false)}>
+                          <Text style={styles.modalCancel}>Hủy</Text>
+                        </Pressable>
+                        <Pressable onPress={() => setShowGenderPicker(false)}>
+                          <Text style={styles.modalDone}>Xong</Text>
+                        </Pressable>
+                      </View>
+                      <Picker
+                        selectedValue={formData.gender}
+                        onValueChange={(itemValue) =>
+                          updateFormData("gender", itemValue)
+                        }
+                      >
+                        <Picker.Item label="Nam" value={Gender.Male} />
+                        <Picker.Item label="Nữ" value={Gender.Female} />
+                      </Picker>
+                    </View>
+                  </View>
+                </Modal>
+              </>
+            )}
+          </View>
+        </View>
+        {showDatePicker && Platform.OS === "android" && (
+          <DateTimePicker
+            value={formData.dateOfBirth || new Date()}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+            maximumDate={new Date()}
+          />
+        )}
+        {/* Modal iOS */}
+        <Modal
+          visible={showDatePicker && Platform.OS === "ios"}
+          transparent
+          animationType="slide"
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.pickerContainer}>
+              <View style={styles.modalHeader}>
+                <Pressable onPress={() => setShowDatePicker(false)}>
+                  <Text style={styles.modalCancel}>Hủy</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    setShowDatePicker(false);
+                  }}
+                >
+                  <Text style={styles.modalDone}>Xong</Text>
+                </Pressable>
+              </View>
+              <DateTimePicker
+                value={formData.dateOfBirth || new Date()}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+                maximumDate={new Date()}
+                style={{ backgroundColor: "white" }}
+              />
+            </View>
+          </View>
+        </Modal>
       </View>
       <View style={styles.viewButtonEditProfile}>
-        <TouchableOpacity style={styles.buttonEditProfile}>
+        <TouchableOpacity
+          style={styles.buttonEditProfile}
+          onPress={handleUpdate}
+        >
           <Text style={styles.textEditProfile}>Cập Nhật</Text>
         </TouchableOpacity>
       </View>
@@ -101,5 +273,62 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     color: "#fff",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  pickerContainer: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingBottom: 32,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 16,
+  },
+  modalCancel: {
+    color: "#FF3B30",
+    fontSize: 16,
+  },
+  modalDone: {
+    color: "#2260FF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  rowContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  datePickerContainer: {
+    flex: 1.2,
+  },
+  genderPickerContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  genderLabel: {
+    fontSize: 18,
+    marginBottom: 4,
+    fontWeight: "500",
+  },
+  pickerWrapper: {
+    backgroundColor: "#ECF1FF",
+    borderRadius: 8,
+    overflow: "hidden",
+    zIndex: 10,
+  },
+  picker: {
+    height: 44,
+    width: "100%",
+  },
+  pickerText: {
+    padding: 12,
+    fontSize: 16,
+    color: "#333",
   },
 });

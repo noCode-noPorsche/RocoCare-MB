@@ -1,7 +1,6 @@
-import React from "react";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
-import HeaderShown from "../components/HeaderShown";
 import { Text, View } from "react-native";
+import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function DetailMedicalRecordScreen() {
   return (

@@ -1,10 +1,10 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppContext";
 import AuthStack from "../navigator/AuthStack";
 import MyBottomTabs from "../navigator/MyBottomTabs";
-import WaitingStack from "../navigator/WaitingStack";
-import { AppContext } from "../context/AppContext";
+import WaitingScreen from "../screens/WaitingScreen";
 
 const RootStack = createNativeStackNavigator();
 
@@ -59,7 +59,7 @@ export default function Navigator() {
 
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isLoading ? (
-          <RootStack.Screen name="Waiting" component={WaitingStack} />
+          <RootStack.Screen name="Waiting" component={WaitingScreen} />
         ) : isAuthenticated ? (
           <RootStack.Screen name="Main" component={MyBottomTabs} />
         ) : (

@@ -1,6 +1,5 @@
-import React from "react";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function SetMedicalRecordScreen() {
   return (

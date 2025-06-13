@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
 import {
   Alert,
   Image,
@@ -13,14 +14,12 @@ import { Ionicons } from "react-native-vector-icons";
 import BPIcon from "../assets/blood_pressure.svg";
 import CameraIcon from "../assets/camera_video.svg";
 import MHRIcon from "../assets/cardiology.svg";
+import CallEmergencyIcon from "../assets/emergency_call.svg";
 import SearchIcon from "../assets/search_icon.svg";
 import SPo2Icon from "../assets/spo2.svg";
+import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
-import CallEmergencyIcon from "../assets/emergency_call.svg";
-import CalendarStrip from "../components/CalendarStrip";
-import TimeTableSchedule from "../components/TimeTableSchedule";
-import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 
 export default function HomeScreen() {

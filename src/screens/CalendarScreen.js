@@ -9,6 +9,7 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
 import CalendarStrip from "../components/CalendarStrip";
 import { useNavigation } from "@react-navigation/native";
+
 export default function CalendarScreen() {
   const navigation = useNavigation();
   return (

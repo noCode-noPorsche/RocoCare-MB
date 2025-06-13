@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { getAccessTokenFromLS, getProfileFromLS } from "../utils/auth";
+import { clearLS, getAccessTokenFromLS, getProfileFromLS } from "../utils/auth";
 
 const initialAppContext = {
   isAuthenticated: Boolean(getAccessTokenFromLS()),
@@ -20,6 +20,7 @@ export const AppProvider = ({ children }) => {
   const reset = () => {
     setIsAuthenticated(false);
     setProfile(null);
+    clearLS();
   };
 
   return (

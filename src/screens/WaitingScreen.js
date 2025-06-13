@@ -1,7 +1,6 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import { StyleSheet, View } from "react-native";
 import RoboCareLogo from "../assets/robocare_white.svg";
+import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function WaitingScreen() {
   return (

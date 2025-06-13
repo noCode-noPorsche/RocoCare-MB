@@ -10,6 +10,7 @@ import GoogleLogo from "../assets/google.svg";
 import authApi from "../apis/AuthApi";
 import { AppContext } from "../context/AppContext";
 import { useMutation } from "@tanstack/react-query";
+import { setAccessTokenToLS } from "../utils/auth";
 
 export default function GoogleSignIn() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext);
@@ -51,6 +52,8 @@ export default function GoogleSignIn() {
         onSuccess: (data) => {
           setIsAuthenticated(true);
           setProfile(data.data.data.userResponse);
+          console.log(data.data.data.token, "login");
+          setAccessTokenToLS(data.data.data.token);
         },
         onError: (error) => {
           console.log(error);

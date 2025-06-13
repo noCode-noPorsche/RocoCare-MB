@@ -11,6 +11,12 @@ const authApi = {
   login(body) {
     return http.post(pathAPI.login, body);
   },
+  update(body) {
+    return http.put(pathAPI.update, body);
+  },
+  profile() {
+    return http.get(pathAPI.profile);
+  },
 };
 
 export default authApi;
