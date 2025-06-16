@@ -15,5 +15,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     backgroundColor: "#fff",
     gap: 20,
+    paddingBottom: 40,
   },
 });

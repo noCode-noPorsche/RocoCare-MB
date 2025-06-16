@@ -71,7 +71,9 @@ export default function ProfileScreen() {
         <View style={styles.viewAvatar}>
           <Image
             source={{
-              uri: profile.avatarUrl,
+              uri: profile.avatarUrl
+                ? profile.avatarUrl
+                : "https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png",
             }}
             alt=""
             style={{ width: 100, height: 100, borderRadius: 50 }}
@@ -109,7 +111,6 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             );
           })}
-
           <ActionSheet
             ref={actionSheetRef}
             title={"Bạn có chắc muốn xoá?"}

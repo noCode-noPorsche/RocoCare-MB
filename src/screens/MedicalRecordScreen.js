@@ -11,10 +11,13 @@ import HeaderShown from "../components/HeaderShown";
 import { useState } from "react";
 import TextDate from "../components/TextDate";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MedicalRecordScreen() {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(0);
+
+  const insets = useSafeAreaInsets(); // ⬅️ thêm vào đây
 
   const buttons = [
     { id: 1, label: "Hồ Sơ Bệnh án" },
@@ -54,7 +57,11 @@ export default function MedicalRecordScreen() {
             );
           })}
         </ScrollView>
-        <ScrollView vertical showsVerticalScrollIndicator={false}>
+        <ScrollView
+          vertical
+          showsVerticalScrollIndicator={true}
+          // contentContainerStyle={{ paddingBottom: insets.bottom + -100 }}
+        >
           <View style={styles.viewContentMedicalRecord}>
             <View style={styles.viewContentMedicalRecordItem}>
               <View style={styles.viewContentMedicalRecordItemImage}>
@@ -203,22 +210,22 @@ export default function MedicalRecordScreen() {
             </View>
           </View>
         </ScrollView>
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={() => {
-            navigation.navigate("SetMedical");
-          }}
-        >
-          <Text style={styles.floatingButtonText}>＋</Text>
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          navigation.navigate("SetMedical");
+        }}
+      >
+        <Text style={styles.floatingButtonText}>＋</Text>
+      </TouchableOpacity>
     </SafeAreaViewCustom>
   );
 }
 
 const styles = StyleSheet.create({
   viewMedicalRecord: {
-    // flex: 1,
+    flex: 1,
     display: "flex",
     flexDirection: "column",
     gap: 10,
@@ -227,7 +234,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     gap: 10,
-    // overflow: "scroll",
+    overflow: "scroll",
   },
   buttonMedicalRecord: {
     display: "flex",
@@ -294,7 +301,7 @@ const styles = StyleSheet.create({
   floatingButton: {
     position: "absolute",
     bottom: 100,
-    right: 0,
+    right: 32,
     width: 56,
     height: 56,
     borderRadius: 28,

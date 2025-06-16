@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Linking,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import BPIcon from "../assets/blood_pressure.svg";
@@ -21,6 +22,8 @@ import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
 import { AppContext } from "../context/AppContext";
+import { useQuery } from "@tanstack/react-query";
+import healthApi from "../apis/HealthApi";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -45,6 +48,35 @@ export default function HomeScreen() {
     );
   };
 
+  const showConfirmAlertCall = () => {
+    Alert.alert(
+      "Xác nhận gọi khẩn cấp",
+      "Bạn có chắc chắn muốn gọi đến số khẩn cấp?",
+      [
+        {
+          text: "Hủy",
+          onPress: () => console.log("Đã hủy cuộc gọi"),
+          style: "cancel",
+        },
+        {
+          text: "Gọi ngay",
+          onPress: () => {
+            const emergencyNumber = "115"; // Thay đổi theo nhu cầu
+            Linking.openURL(`tel:${emergencyNumber}`);
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const { data: healthMetricData } = useQuery({
+    queryKey: ["health"],
+    queryFn: () => healthApi.getHealthInformation(),
+  });
+
+  // console.log(healthMetricData.data.data.items[0]);
+
   return (
     <SafeAreaViewCustom>
       <View style={styles.viewHeader}>
@@ -52,7 +84,9 @@ export default function HomeScreen() {
           <View>
             <Image
               source={{
-                uri: profile.avatarUrl,
+                uri: profile.avatarUrl
+                  ? profile.avatarUrl
+                  : "https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png",
               }}
               alt=""
               style={{ width: 50, height: 50, borderRadius: 50 }}
@@ -102,7 +136,12 @@ export default function HomeScreen() {
               <Text style={styles.textNameHealth}>Chỉ số nhịp tim (MHR)</Text>
               <View style={styles.viewTextHealth}>
                 <MHRIcon width={30} height={30} />
-                <Text style={styles.textHealthIndex}>190 bpm</Text>
+                <Text style={styles.textHealthIndex}>
+                  {healthMetricData
+                    ? healthMetricData.data.data.items[0].heartRate
+                    : 0}{" "}
+                  bpm
+                </Text>
               </View>
               <TextDate day="Chủ nhật" date="18/5" />
             </TouchableOpacity>
@@ -122,7 +161,12 @@ export default function HomeScreen() {
               </Text>
               <View style={styles.viewTextHealth}>
                 <SPo2Icon width={30} height={30} />
-                <Text style={styles.textHealthIndex}>95 - 100%</Text>
+                <Text style={styles.textHealthIndex}>
+                  {healthMetricData
+                    ? healthMetricData.data.data.items[0].oxygenLevel
+                    : 0}
+                  %
+                </Text>
               </View>
               <TextDate day="Chủ nhật" date="18/5" />
             </TouchableOpacity>
@@ -144,7 +188,11 @@ export default function HomeScreen() {
         }}
       >
         <Text style={styles.floatingButtonText}>
-          <CallEmergencyIcon width={30} height={30} />
+          <CallEmergencyIcon
+            onPress={showConfirmAlertCall}
+            width={30}
+            height={30}
+          />
         </Text>
       </TouchableOpacity>
     </SafeAreaViewCustom>
@@ -254,7 +302,7 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     position: "absolute",
-    bottom: 40,
+    bottom: 100,
     right: 20,
     width: 56,
     height: 56,

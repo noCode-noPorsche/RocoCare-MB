@@ -97,6 +97,14 @@ export default function CalendarScreen() {
           </View>
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          navigation.navigate("SetMedical");
+        }}
+      >
+        <Text style={styles.floatingButtonText}>＋</Text>
+      </TouchableOpacity>
     </SafeAreaViewCustom>
   );
 }
@@ -179,5 +187,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 100,
+    right: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#2260FF",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 5,
+    zIndex: 999,
+  },
+  floatingButtonText: {
+    color: "#fff",
+    fontSize: 32,
+    lineHeight: 32,
+    fontWeight: "bold",
   },
 });

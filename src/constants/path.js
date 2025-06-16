@@ -4,6 +4,7 @@ const pathAPI = {
   login: "/auth/login",
   update: "/auth/user-update-infor",
   profile: "/auth/infor",
+  healthMetric: "/health-metric",
 };
 
 export default pathAPI;

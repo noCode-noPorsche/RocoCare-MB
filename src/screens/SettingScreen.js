@@ -9,40 +9,47 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 
 export default function SettingScreen() {
   const navigation = useNavigation();
+
+  const buttonItems = [
+    {
+      label: "Cài Đặt Thông Báo",
+      icon: LightIcon,
+      onPress: () => navigation.navigate("SettingNotification"),
+    },
+    {
+      label: "Quản Lý Mật Khẩu",
+      icon: KeyIcon,
+      onPress: () => navigation.navigate("ManagePassword"),
+    },
+    {
+      label: "Thiết Lập Khẩn Cấp",
+      icon: LightIcon,
+      onPress: () => navigation.navigate("EmergencySetting"),
+    },
+  ];
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Cài Đặt"} />
       <View style={styles.viewButtonProfile}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("SettingNotification")}
-          style={styles.buttonSetting}
-        >
-          <View style={styles.iconButton}>
-            <LightIcon width={20} height={20} />
-          </View>
-          <Text style={styles.textFeature}>Cài Đặt Thông Báo</Text>
-          <ArrowRightIcon width={14} height={14} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ManagePassword")}
-          style={styles.buttonSetting}
-        >
-          <View style={styles.iconButton}>
-            <KeyIcon width={20} height={20} />
-          </View>
-          <Text style={styles.textFeature}>Quản Lý Mật Khẩu</Text>
-          <ArrowRightIcon width={14} height={14} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EmergencySetting")}
-          style={styles.buttonSetting}
-        >
-          <View style={styles.iconButton}>
-            <CallIcon width={20} height={20} />
-          </View>
-          <Text style={styles.textFeature}>Thiết Lập Khẩn Cấp</Text>
-          <ArrowRightIcon width={14} height={14} />
-        </TouchableOpacity>
+        {buttonItems.map((item, index) => {
+          const IconComponent = item.icon;
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.buttonProfile}
+              onPress={item.onPress}
+            >
+              <View style={styles.iconButtonText}>
+                <View style={styles.iconButton}>
+                  <IconComponent width={24} height={24} />
+                </View>
+                <Text style={styles.textFeature}>{item.label}</Text>
+              </View>
+
+              <ArrowRightIcon width={14} height={14} />
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </SafeAreaViewCustom>
   );
@@ -50,21 +57,27 @@ export default function SettingScreen() {
 
 const styles = StyleSheet.create({
   viewButtonProfile: {
+    marginTop: 20,
     display: "flex",
     flexDirection: "column",
-    gap: 12,
+    gap: 18,
   },
   iconButton: {
     backgroundColor: "#CAD6FF",
     borderRadius: 100,
     width: 30,
     height: 30,
-    padding: 12,
+    padding: 20,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonSetting: {
+  textFeature: {
+    fontSize: 20,
+    fontWeight: "semibold",
+    textAlign: "center",
+  },
+  buttonProfile: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -72,8 +85,11 @@ const styles = StyleSheet.create({
     // elevation: 2, // Android shadow
     // shadowColor: "#000", // iOS shadow
   },
-  textFeature: {
-    fontSize: 16,
-    fontWeight: "semibold",
+  iconButtonText: {
+    display: "flex",
+    gap: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

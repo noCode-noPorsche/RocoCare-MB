@@ -9,6 +9,7 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import { AppContext } from "../context/AppContext";
 import { useMutation } from "@tanstack/react-query";
 import authApi from "../apis/AuthApi";
+import { setAccessTokenToLS } from "../utils/auth";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -33,8 +34,8 @@ export default function LoginScreen() {
   const loginAccountMutation = useMutation({
     mutationFn: (body) => authApi.login(body),
     onSuccess: (data) => {
-      console.log(data?.data.data);
       setIsAuthenticated(true);
+      setAccessTokenToLS(data.data.data.token);
       setProfile(data?.data.data.userResponse);
     },
     onError: (error) => {

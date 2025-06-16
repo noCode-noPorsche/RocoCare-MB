@@ -4,6 +4,7 @@ import CalendarStack from "./CalendarStack";
 import MedicalRecordStack from "./MedicalRecordStack";
 import ProfileStack from "./ProfileStack";
 import { Ionicons } from "react-native-vector-icons";
+import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +23,38 @@ function MyBottomTabs() {
           } else if (route.name === "Profile") {
             iconName = focused ? "person" : "person-outline";
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name={iconName} size={30} color={color} />
+            </View>
+          );
+        },
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: "#fff",
+        tabBarInactiveTintColor: "#cfe3ff",
+        tabBarStyle: {
+          position: "absolute",
+          bottom: 20,
+          left: 16,
+          right: 16,
+          elevation: 5,
+          backgroundColor: "#2260FF",
+          borderRadius: 36,
+          height: 50,
+          borderTopWidth: 0,
+          // paddingBottom: 10,
+          marginLeft: 30,
+          marginRight: 30,
+          paddingTop: 5,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
         },
       })}
     >
