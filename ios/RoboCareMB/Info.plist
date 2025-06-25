@@ -10,6 +10,10 @@
     <string>RoboCare-MB</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Chúng tôi cần truy cập thư viện ảnh để bạn chọn hình ảnh.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Cho phép ứng dụng lưu ảnh vào thư viện.</string>
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key>

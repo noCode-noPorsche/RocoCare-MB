@@ -5,8 +5,33 @@ import MedicalRecordStack from "./MedicalRecordStack";
 import ProfileStack from "./ProfileStack";
 import { Ionicons } from "react-native-vector-icons";
 import { View } from "react-native";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
+
+function getTabBarStyle(route, hideScreens) {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+
+  if (hideScreens.includes(routeName)) {
+    return { display: "none" };
+  }
+
+  return {
+    position: "absolute",
+    bottom: 20,
+    elevation: 5,
+    backgroundColor: "#2260FF",
+    borderRadius: 36,
+    height: 50,
+    marginLeft: 30,
+    marginRight: 30,
+    paddingTop: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  };
+}
 
 function MyBottomTabs() {
   return (
@@ -24,12 +49,7 @@ function MyBottomTabs() {
             iconName = focused ? "person" : "person-outline";
           }
           return (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Ionicons name={iconName} size={30} color={color} />
             </View>
           );
@@ -37,66 +57,48 @@ function MyBottomTabs() {
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#fff",
         tabBarInactiveTintColor: "#cfe3ff",
-        tabBarStyle: {
-          position: "absolute",
-          bottom: 20,
-          left: 16,
-          right: 16,
-          elevation: 5,
-          backgroundColor: "#2260FF",
-          borderRadius: 36,
-          height: 50,
-          borderTopWidth: 0,
-          // paddingBottom: 10,
-          marginLeft: 30,
-          marginRight: 30,
-          paddingTop: 5,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.1,
-          shadowRadius: 5,
-        },
       })}
     >
       <Tab.Screen
         name="Home"
         component={HomeStack}
-        options={{
+        options={({ route }) => ({
           headerShown: false,
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
-        }}
+          tabBarStyle: getTabBarStyle(route, [
+            "Notification",
+            "Setting",
+            "AnotherHomeScreen",
+          ]),
+        })}
       />
       <Tab.Screen
         name="Calendar"
         component={CalendarStack}
-        options={{
+        options={({ route }) => ({
           headerShown: false,
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
-        }}
+          tabBarStyle: getTabBarStyle(route, ["SetCalendar", "DetailCalendar"]),
+        })}
       />
       <Tab.Screen
         name="Medical"
         component={MedicalRecordStack}
-        options={{
+        options={({ route }) => ({
           headerShown: false,
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
-        }}
+          tabBarStyle: getTabBarStyle(route, ["DetailMedical", "SetMedical"]),
+        })}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileStack}
-        options={{
+        options={({ route }) => ({
           headerShown: false,
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="heart-outline" size={size} color={color} />
-          // ),
-        }}
+          tabBarStyle: getTabBarStyle(route, [
+            "EditProfile",
+            "PrivacyPolicy",
+            "Setting",
+            "Help",
+          ]),
+        })}
       />
     </Tab.Navigator>
   );

@@ -16,7 +16,6 @@ import BPIcon from "../assets/blood_pressure.svg";
 import CameraIcon from "../assets/camera_video.svg";
 import MHRIcon from "../assets/cardiology.svg";
 import CallEmergencyIcon from "../assets/emergency_call.svg";
-import SearchIcon from "../assets/search_icon.svg";
 import SPo2Icon from "../assets/spo2.svg";
 import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
@@ -24,6 +23,7 @@ import TextDate from "../components/TextDate";
 import { AppContext } from "../context/AppContext";
 import { useQuery } from "@tanstack/react-query";
 import healthApi from "../apis/HealthApi";
+import ImagePickerButton from "../components/ImagePickerButton";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -78,7 +78,7 @@ export default function HomeScreen() {
   // console.log(healthMetricData.data.data.items[0]);
 
   return (
-    <SafeAreaViewCustom>
+    <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
       <View style={styles.viewHeader}>
         <View style={styles.viewInformation}>
           <View>
@@ -112,24 +112,16 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.viewSearchBox}>
-        <TouchableOpacity>
-          <SearchIcon width={20} height={20} />
-        </TouchableOpacity>
-        <TextInput placeholder="" style={styles.textInputSearch} />
-        <TouchableOpacity>
-          <Ionicons name="mic-outline" size={20} color="#2260FF" />
-        </TouchableOpacity>
+      <View style={styles.viewCalendar}>
+        <CalendarStrip timeTableSchedule={true} />
+        {/* <TimeTableSchedule /> */}
       </View>
+
       <ScrollView
         vertical
         showsVerticalScrollIndicator={false}
         // contentContainerStyle={styles.viewCalendar}
       >
-        <View style={styles.viewCalendar}>
-          <CalendarStrip timeTableSchedule={true} />
-          {/* <TimeTableSchedule /> */}
-        </View>
         <View style={styles.viewHealthInformation}>
           <View style={styles.viewButtonHealth}>
             <TouchableOpacity style={styles.buttonHealth}>
@@ -208,6 +200,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   viewInformation: {
     display: "flex",
@@ -239,27 +233,8 @@ const styles = StyleSheet.create({
     elevation: 2, // Android shadow
     shadowColor: "#000", // iOS shadow
   },
-  viewSearchBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#CAD6FF",
-    borderRadius: 23,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginTop: 20,
-  },
-  textInputSearch: {
-    flex: 1,
-    height: 40,
-    paddingHorizontal: 20,
-    borderRadius: 23,
-    paddingVertical: 8,
-    fontSize: 16,
-  },
   viewCalendar: {
     backgroundColor: "#CAD6FF",
-    marginBottom: 20,
     // borderRadius: 12,
     // height: 200,
   },
@@ -267,6 +242,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 12,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   viewButtonHealth: {
     display: "flex",

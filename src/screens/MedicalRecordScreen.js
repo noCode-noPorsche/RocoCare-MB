@@ -3,6 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -11,13 +12,12 @@ import HeaderShown from "../components/HeaderShown";
 import { useState } from "react";
 import TextDate from "../components/TextDate";
 import { useNavigation } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SearchIcon from "../assets/search_icon.svg";
+import { Ionicons } from "react-native-vector-icons";
 
 export default function MedicalRecordScreen() {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(0);
-
-  const insets = useSafeAreaInsets(); // ⬅️ thêm vào đây
 
   const buttons = [
     { id: 1, label: "Hồ Sơ Bệnh án" },
@@ -28,6 +28,15 @@ export default function MedicalRecordScreen() {
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Thông Tin Bệnh Án"} iconBack={false} />
+      <View style={styles.viewSearchBox}>
+        <TouchableOpacity>
+          <SearchIcon width={20} height={20} />
+        </TouchableOpacity>
+        <TextInput placeholder="" style={styles.textInputSearch} />
+        <TouchableOpacity>
+          <Ionicons name="mic-outline" size={20} color="#2260FF" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.viewMedicalRecord}>
         <ScrollView
           horizontal
@@ -225,8 +234,8 @@ export default function MedicalRecordScreen() {
 
 const styles = StyleSheet.create({
   viewMedicalRecord: {
-    flex: 1,
     display: "flex",
+    flex: 1,
     flexDirection: "column",
     gap: 10,
   },
@@ -257,7 +266,7 @@ const styles = StyleSheet.create({
   },
   viewContentMedicalRecord: {
     backgroundColor: "#fff",
-    padding: 10,
+    // padding: 10,
     borderRadius: 10,
     display: "flex",
     flexDirection: "column",
@@ -325,5 +334,22 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 10,
+  },
+  viewSearchBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#CAD6FF",
+    borderRadius: 23,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  textInputSearch: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 20,
+    borderRadius: 23,
+    paddingVertical: 8,
+    fontSize: 16,
   },
 });

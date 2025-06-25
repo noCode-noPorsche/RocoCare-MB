@@ -60,7 +60,7 @@ export default function CalendarStrip({ timeTableSchedule = false }) {
 const styles = StyleSheet.create({
   container: {
     // backgroundColor: "#",
-    padding: 10,
+    // padding: 10,
     // borderRadius: 36,
     margin: 16,
   },
@@ -68,12 +68,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   dateItem: {
-    // textAlign: "center",
+    textAlign: "center",
     backgroundColor: "#fff",
     alignItems: "center",
     padding: 16,
+
     borderRadius: 22,
-    width: 60,
+    // width: 60,
     marginHorizontal: 4,
   },
   dateItemSelected: {

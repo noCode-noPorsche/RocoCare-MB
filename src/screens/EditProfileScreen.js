@@ -21,6 +21,8 @@ import { formatDate } from "../utils/utils";
 import { useMutation } from "@tanstack/react-query";
 import authApi from "../apis/AuthApi";
 import { useNavigation } from "expo-router";
+import uploadFile from "../utils/upload";
+import { launchImageLibrary } from "react-native-image-picker";
 
 export default function EditProfileScreen() {
   const { profile, setProfile } = useContext(AppContext);
@@ -37,6 +39,7 @@ export default function EditProfileScreen() {
       ? new Date(profile.dateOfBirth)
       : new Date(),
     gender: profile.gender,
+    avatarUrl: profile.avatarUrl || "",
   });
 
   const updateFormData = (key, value) => {
@@ -44,6 +47,44 @@ export default function EditProfileScreen() {
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleChangeAvatar = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        quality: 1,
+      },
+      async (response) => {
+        if (response.didCancel) {
+          console.log("User cancelled image picker");
+        } else if (response.errorCode === "permission") {
+          Alert.alert(
+            "Quyền bị từ chối",
+            "Vui lòng cấp quyền truy cập thư viện ảnh trong Cài đặt.",
+            [
+              { text: "Hủy", style: "cancel" },
+              { text: "Mở Cài đặt", onPress: () => Linking.openSettings() },
+            ]
+          );
+        } else if (response.errorCode) {
+          console.error("Lỗi: ", response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          const uri = asset.uri;
+          const fileName = asset.fileName || `avatar_${Date.now()}.jpg`;
+
+          if (uri) {
+            try {
+              const firebaseUrl = await uploadFile(uri, fileName);
+              updateFormData("avatarUrl", firebaseUrl); // Cập nhật vào form
+            } catch (error) {
+              console.error("❌ Upload lỗi: ", error);
+            }
+          }
+        }
+      }
+    );
   };
 
   const handleDateChange = (_event, selectedDate) => {
@@ -73,6 +114,7 @@ export default function EditProfileScreen() {
       phoneNumber: formData.phoneNumber,
       dateOfBirth: formData.dateOfBirth,
       gender: formData.gender,
+      avatarUrl: formData.avatarUrl,
     };
     updateAccountMutation.mutate(updateFormData);
   };
@@ -82,24 +124,29 @@ export default function EditProfileScreen() {
       <HeaderShown HeaderName={"Chỉnh Sửa Hồ Sơ"} />
       <View style={styles.viewProfile}>
         <View style={styles.viewAvatar}>
-          <Image
-            source={{
-              uri: profile.avatarUrl
-                ? profile.avatarUrl
-                : "https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png",
-            }}
-            alt=""
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-          <UploadAvatarIcon
-            width={22}
-            height={22}
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 5,
-            }}
-          />
+          <TouchableOpacity
+            style={styles.viewAvatar}
+            onPress={handleChangeAvatar}
+          >
+            <Image
+              source={{
+                uri: formData.avatarUrl
+                  ? formData.avatarUrl
+                  : "https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png",
+              }}
+              alt=""
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+            <UploadAvatarIcon
+              width={22}
+              height={22}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 5,
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.viewEditProfile}>

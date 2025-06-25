@@ -17,6 +17,9 @@ const authApi = {
   profile() {
     return http.get(pathAPI.profile);
   },
+  changePassword(body) {
+    return http.post(pathAPI.changePassword, body);
+  },
 };
 
 export default authApi;

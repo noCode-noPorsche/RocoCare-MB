@@ -84,7 +84,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 22,
   },
-  viewChangePassword: {},
+  viewChangePassword: {
+    marginBottom: 20,
+  },
   buttonChangePassword: {
     backgroundColor: "#2260FF",
     padding: 20,
