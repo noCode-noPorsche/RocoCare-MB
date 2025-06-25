@@ -1,17 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import {
   Alert,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
-  Linking,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
+import healthApi from "../apis/HealthApi";
 import BPIcon from "../assets/blood_pressure.svg";
 import CameraIcon from "../assets/camera_video.svg";
 import MHRIcon from "../assets/cardiology.svg";
@@ -21,9 +22,6 @@ import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
 import { AppContext } from "../context/AppContext";
-import { useQuery } from "@tanstack/react-query";
-import healthApi from "../apis/HealthApi";
-import ImagePickerButton from "../components/ImagePickerButton";
 
 export default function HomeScreen() {
   const navigation = useNavigation();

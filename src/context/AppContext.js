@@ -1,5 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { clearLS, getAccessTokenFromLS, getProfileFromLS } from "../utils/auth";
+import authApi from "../apis/AuthApi";
 
 const initialAppContext = {
   isAuthenticated: Boolean(getAccessTokenFromLS()),
@@ -22,6 +23,26 @@ export const AppProvider = ({ children }) => {
     setProfile(null);
     clearLS();
   };
+
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      const token = getAccessTokenFromLS();
+
+      if (token) {
+        try {
+          const response = await authApi.profile();
+          setProfile(response.data.data);
+          setIsAuthenticated(true);
+        } catch (err) {
+          console.log("❌ Lỗi khi load profile: ", err);
+          reset(); // Token sai thì xoá
+          setIsAuthenticated(false);
+        }
+      }
+    };
+
+    bootstrapAsync();
+  }, []);
 
   return (
     <AppContext.Provider
