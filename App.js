@@ -4,6 +4,7 @@ import { AppProvider } from "./src/context/AppContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificatedProvider } from "react-native-notificated";
 import Navigator from "./src/components/Navigator";
+import Toast from "react-native-toast-message";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function App() {
         <AppProvider>
           <View style={styles.container}>
             <Navigator />
+            <Toast />
           </View>
         </AppProvider>
       </QueryClientProvider>

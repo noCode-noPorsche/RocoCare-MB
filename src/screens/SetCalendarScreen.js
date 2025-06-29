@@ -9,8 +9,26 @@ import CalendarStrip from "../components/CalendarStrip";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import { useState } from "react";
 
 export default function SetCalendarScreen() {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    fullName: "",
+    age: "",
+    gender: "",
+    isAllDay: true,
+    time: "",
+  });
+
+  const updateFormData = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
   return (
     <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
       <HeaderShown

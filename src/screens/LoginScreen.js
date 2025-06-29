@@ -10,6 +10,7 @@ import { AppContext } from "../context/AppContext";
 import { useMutation } from "@tanstack/react-query";
 import authApi from "../apis/AuthApi";
 import { setAccessTokenToLS } from "../utils/auth";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -37,6 +38,11 @@ export default function LoginScreen() {
       setIsAuthenticated(true);
       setAccessTokenToLS(data.data.data.token);
       setProfile(data?.data.data.userResponse);
+      Toast({
+        title: "Xong rồi!",
+        message: "Thông tin đã được cập nhật.",
+        preset: "done", // hoặc "success", "error"
+      });
     },
     onError: (error) => {
       console.log("error", error?.response?.data);

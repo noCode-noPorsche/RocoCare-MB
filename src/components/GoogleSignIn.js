@@ -11,6 +11,7 @@ import authApi from "../apis/AuthApi";
 import { AppContext } from "../context/AppContext";
 import { useMutation } from "@tanstack/react-query";
 import { setAccessTokenToLS } from "../utils/auth";
+import Toast from "react-native-toast-message";
 
 export default function GoogleSignIn() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext);
@@ -54,6 +55,11 @@ export default function GoogleSignIn() {
           setProfile(data.data.data.userResponse);
           console.log(data.data.data.token, "login");
           setAccessTokenToLS(data.data.data.token);
+          Toast.show({
+            type: "success", // 'success' | 'error' | 'info'
+            text1: "Thành công!",
+            text2: "Đã lưu thông tin bệnh án 👌",
+          });
         },
         onError: (error) => {
           console.log(error);

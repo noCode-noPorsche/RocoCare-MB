@@ -21,16 +21,23 @@ import uploadFile from "../utils/upload";
 import { Picker } from "@react-native-picker/picker";
 import ImageViewer from "react-native-image-zoom-viewer";
 import RNModal from "react-native-modal";
+import { MedicalRecordType } from "../constants/enum";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import medicalRecordApi from "../apis/MedicalRecordApi";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SetMedicalRecordScreen() {
+  const navigation = useNavigation();
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  // const queryClient = useQueryClient();
   const recordTypes = [
-    { label: "Hồ sơ bệnh án", value: "medical" },
-    { label: "Hóa đơn", value: "invoice" },
-    { label: "Đơn thuốc", value: "prescription" },
-    { label: "Giấy tờ tùy thân", value: "identity" },
+    { label: "Hồ sơ bệnh án", value: MedicalRecordType.MedicalRecords },
+    { label: "Hóa đơn", value: MedicalRecordType.Invoice },
+    { label: "Đơn thuốc", value: MedicalRecordType.Prescription },
+    { label: "Giấy tờ tùy thân", value: MedicalRecordType.ID },
   ];
 
   const [formData, setFormData] = useState({
@@ -90,8 +97,35 @@ export default function SetMedicalRecordScreen() {
     );
   };
 
+  const createMedicalRecordMutation = useMutation({
+    mutationFn: (body) => medicalRecordApi.createMedicalRecord(body),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Thành công!",
+        text2: "Tạo thông tin thành công!",
+      });
+      // queryClient.invalidateQueries({ queryKey: ["medical-record"] });
+      navigation.navigate("Medical");
+    },
+    onError: (error) => {
+      console.log("error", error);
+      Toast.show({
+        type: "error",
+        text1: "Thất bại!",
+        text2: "Tạo thông tin thất bại!",
+      });
+    },
+  });
+
   const handleSubmit = () => {
-    console.log("first", formData);
+    const createFormData = {
+      title: formData.title,
+      resourceUrl: formData.resourceUrl,
+      type: formData.type,
+    };
+    console.log(createFormData, "first");
+    createMedicalRecordMutation.mutate(createFormData);
   };
 
   return (

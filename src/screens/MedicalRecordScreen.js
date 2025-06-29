@@ -14,17 +14,36 @@ import TextDate from "../components/TextDate";
 import { useNavigation } from "@react-navigation/native";
 import SearchIcon from "../assets/search_icon.svg";
 import { Ionicons } from "react-native-vector-icons";
+import { useQuery } from "@tanstack/react-query";
+import medicalRecordApi from "../apis/MedicalRecordApi";
+import { MedicalRecordType } from "../constants/enum";
+import { getTypeLabel } from "../utils/utils";
 
 export default function MedicalRecordScreen() {
   const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState("");
+
+  const { data: medicalRecordData } = useQuery({
+    queryKey: ["medical-record"],
+    queryFn: () => medicalRecordApi.getMedicalRecord(),
+    refetchOnMount: true,
+  });
 
   const buttons = [
-    { id: 1, label: "Hồ Sơ Bệnh án" },
-    { id: 2, label: "Hóa Đơn" },
-    { id: 3, label: "Đơn Thuốc" },
-    { id: 4, label: "Giấy Tờ Tùy Thân" },
+    { label: "Tất cả", value: "" },
+    { label: "Hồ Sơ Bệnh Án", value: MedicalRecordType.MedicalRecords },
+    { label: "Hóa Đơn", value: MedicalRecordType.Invoice },
+    { label: "Đơn Thuốc", value: MedicalRecordType.Prescription },
+    { label: "Giấy Tờ Tùy Thân", value: MedicalRecordType.ID },
   ];
+
+  const filteredRecords = (
+    medicalRecordData?.data?.data?.items &&
+    Array.isArray(medicalRecordData.data.data.items)
+      ? medicalRecordData.data.data.items
+      : []
+  ).filter((record) => (selectedTab ? record.type === selectedTab : true));
+
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Thông Tin Bệnh Án"} iconBack={false} />
@@ -43,16 +62,16 @@ export default function MedicalRecordScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.viewButtonMedicalRecord}
         >
-          {buttons.map((button) => {
-            const isActive = button.id === selectedTab;
+          {buttons.map((type) => {
+            const isActive = selectedTab === type.value;
             return (
               <TouchableOpacity
-                key={button.id}
+                key={type.value}
                 style={[
                   styles.buttonMedicalRecord,
                   isActive && styles.buttonActive,
                 ]}
-                onPress={() => setSelectedTab(button.id)}
+                onPress={() => setSelectedTab(type.value)}
               >
                 <Text
                   style={[
@@ -60,7 +79,7 @@ export default function MedicalRecordScreen() {
                     isActive && styles.textActive,
                   ]}
                 >
-                  {button.label}
+                  {type.label}
                 </Text>
               </TouchableOpacity>
             );
@@ -68,155 +87,50 @@ export default function MedicalRecordScreen() {
         </ScrollView>
         <ScrollView
           vertical
-          showsVerticalScrollIndicator={true}
-          // contentContainerStyle={{ paddingBottom: insets.bottom + -100 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 170 }}
         >
           <View style={styles.viewContentMedicalRecord}>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View style={styles.viewContentMedicalRecordItemTextDate}>
-                  <TextDate
-                    style={{
-                      paddingTop: 2,
-                      paddingBottom: 2,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                    }}
-                    day="Chủ nhật"
-                    date="18/5"
-                  />
-                  <TouchableOpacity
-                    style={styles.buttonDetailMedicalRecord}
-                    onPress={() => {
-                      navigation.navigate("DetailMedical");
-                    }}
-                  >
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
+            {filteredRecords?.map((record) => {
+              const createdDate = new Date(record.createdTime);
+              const day = createdDate.toLocaleDateString("vi-VN", {
+                weekday: "long",
+              });
+              const date = createdDate.toLocaleDateString("vi-VN");
+
+              return (
+                <View
+                  key={record.id}
+                  style={styles.viewContentMedicalRecordItem}
+                >
+                  <View style={styles.viewContentMedicalRecordItemImage}>
+                    <Image
+                      source={{ uri: record.resourceUrl }}
+                      style={styles.imageMedicalRecord}
+                    />
+                  </View>
+                  <View style={styles.viewContentMedicalRecordItemText}>
+                    <Text style={styles.textMedicalRecord}>{record.title}</Text>
+                    <Text>{getTypeLabel(record.type)}</Text>
+                    <View style={styles.viewContentMedicalRecordItemTextDate}>
+                      <TextDate style={{ padding: 4 }} day={day} date={date} />
+                      <TouchableOpacity
+                        style={styles.buttonDetailMedicalRecord}
+                        onPress={() =>
+                          navigation.navigate("DetailMedical", {
+                            id: record.id,
+                          })
+                        }
+                      >
+                        <Text style={styles.textDetailMedicalRecord}>
+                          Chi Tiết
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View style={styles.viewContentMedicalRecordItemTextDate}>
-                  <TextDate
-                    style={{
-                      paddingTop: 2,
-                      paddingBottom: 2,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                    }}
-                    day="Chủ nhật"
-                    date="18/5"
-                  />
-                  <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View style={styles.viewContentMedicalRecordItemTextDate}>
-                  <TextDate
-                    style={{
-                      paddingTop: 2,
-                      paddingBottom: 2,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                    }}
-                    day="Chủ nhật"
-                    date="18/5"
-                  />
-                  <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View style={styles.viewContentMedicalRecordItemTextDate}>
-                  <TextDate
-                    style={{
-                      paddingTop: 2,
-                      paddingBottom: 2,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                    }}
-                    day="Chủ nhật"
-                    date="18/5"
-                  />
-                  <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <View style={styles.viewContentMedicalRecordItem}>
-              <View style={styles.viewContentMedicalRecordItemImage}>
-                <Image
-                  source={require("../assets/discovery.jpg")}
-                  style={styles.imageMedicalRecord}
-                />
-              </View>
-              <View style={styles.viewContentMedicalRecordItemText}>
-                <Text style={styles.textMedicalRecord}>Hồ Sơ Bệnh Án</Text>
-                <View style={styles.viewContentMedicalRecordItemTextDate}>
-                  <TextDate
-                    style={{
-                      paddingTop: 2,
-                      paddingBottom: 2,
-                      paddingLeft: 8,
-                      paddingRight: 8,
-                    }}
-                    day="Chủ nhật"
-                    date="18/5"
-                  />
-                  <TouchableOpacity style={styles.buttonDetailMedicalRecord}>
-                    <Text style={styles.textDetailMedicalRecord}>
-                      Chi Tiết{" "}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+              );
+            })}
           </View>
         </ScrollView>
       </View>
@@ -235,7 +149,7 @@ export default function MedicalRecordScreen() {
 const styles = StyleSheet.create({
   viewMedicalRecord: {
     display: "flex",
-    flex: 1,
+    // flex: 1,
     flexDirection: "column",
     gap: 10,
   },

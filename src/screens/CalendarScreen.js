@@ -100,7 +100,7 @@ export default function CalendarScreen() {
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
-          navigation.navigate("SetMedical");
+          navigation.navigate("SetCalendar");
         }}
       >
         <Text style={styles.floatingButtonText}>＋</Text>
