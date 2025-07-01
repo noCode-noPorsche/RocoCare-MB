@@ -23,6 +23,7 @@ import authApi from "../apis/AuthApi";
 import { useNavigation } from "expo-router";
 import uploadFile from "../utils/upload";
 import { launchImageLibrary } from "react-native-image-picker";
+import Toast from "react-native-toast-message";
 
 export default function EditProfileScreen() {
   const { profile, setProfile } = useContext(AppContext);
@@ -101,8 +102,18 @@ export default function EditProfileScreen() {
     onSuccess: (data) => {
       setProfile(data.data.data);
       navigation.goBack();
+      Toast.show({
+        type: "success",
+        text1: "Thành công!",
+        text2: "Cập nhật hồ sơ thành công!",
+      });
     },
     onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Thất bại!",
+        text2: "Cập nhật hồ sơ thất bại!",
+      });
       console.log("error", error?.response?.data);
       console.log("FULL ERROR >>>", JSON.stringify(error, null, 2));
     },

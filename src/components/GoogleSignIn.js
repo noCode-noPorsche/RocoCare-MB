@@ -56,9 +56,8 @@ export default function GoogleSignIn() {
           console.log(data.data.data.token, "login");
           setAccessTokenToLS(data.data.data.token);
           Toast.show({
-            type: "success", // 'success' | 'error' | 'info'
-            text1: "Thành công!",
-            text2: "Đã lưu thông tin bệnh án 👌",
+            type: "success",
+            text1: "Đăng nhập thành công!",
           });
         },
         onError: (error) => {

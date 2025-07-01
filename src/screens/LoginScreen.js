@@ -38,11 +38,11 @@ export default function LoginScreen() {
       setIsAuthenticated(true);
       setAccessTokenToLS(data.data.data.token);
       setProfile(data?.data.data.userResponse);
-      Toast({
-        title: "Xong rồi!",
-        message: "Thông tin đã được cập nhật.",
-        preset: "done", // hoặc "success", "error"
-      });
+      // Toast.show({
+      //   title: "Xong rồi!",
+      //   message: "",
+      //   preset: "done", // hoặc "success", "error"
+      // });
     },
     onError: (error) => {
       console.log("error", error?.response?.data);

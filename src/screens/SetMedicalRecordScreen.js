@@ -15,7 +15,7 @@ import {
 import HeaderShown from "../components/HeaderShown";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import InputCustom from "../components/InputCustom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { launchImageLibrary } from "react-native-image-picker";
 import uploadFile from "../utils/upload";
 import { Picker } from "@react-native-picker/picker";
@@ -26,6 +26,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import medicalRecordApi from "../apis/MedicalRecordApi";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
 export default function SetMedicalRecordScreen() {
   const navigation = useNavigation();
@@ -56,6 +57,20 @@ export default function SetMedicalRecordScreen() {
     }));
   };
 
+  const route = useRoute();
+  const recordToEdit = route.params?.recordToEdit;
+
+  useEffect(() => {
+    if (recordToEdit) {
+      setFormData({
+        id: recordToEdit.id || "",
+        title: recordToEdit.title || "",
+        resourceUrl: recordToEdit.resourceUrl || "",
+        type: recordToEdit.type || "",
+      });
+    }
+  }, [recordToEdit]);
+
   const handleUploadImage = () => {
     launchImageLibrary(
       {
@@ -83,13 +98,13 @@ export default function SetMedicalRecordScreen() {
 
           if (uri) {
             try {
-              setIsUploading(true); // ✅ Bắt đầu loading
+              setIsUploading(true); // Bắt đầu loading
               const firebaseUrl = await uploadFile(uri, fileName);
               updateFormData("resourceUrl", firebaseUrl);
             } catch (error) {
-              console.error("❌ Upload lỗi: ", error);
+              console.error("Upload lỗi: ", error);
             } finally {
-              setIsUploading(false); // ✅ Kết thúc loading
+              setIsUploading(false); // Kết thúc loading
             }
           }
         }
@@ -118,14 +133,43 @@ export default function SetMedicalRecordScreen() {
     },
   });
 
+  const updateMedicalRecordMutation = useMutation({
+    mutationFn: (body) => medicalRecordApi.updateMedicalRecord(body),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Thành công!",
+        text2: "Cập nhật thông tin thành công!",
+      });
+      // queryClient.invalidateQueries({ queryKey: ["medical-record"] });
+      navigation.navigate("Medical");
+    },
+    onError: (error) => {
+      console.log("error", error);
+      console.log("first");
+      Toast.show({
+        type: "error",
+        text1: "Thất bại!",
+        text2: "Cập nhật thông tin thất bại!",
+      });
+    },
+  });
+
   const handleSubmit = () => {
-    const createFormData = {
+    const body = {
       title: formData.title,
       resourceUrl: formData.resourceUrl,
       type: formData.type,
     };
-    console.log(createFormData, "first");
-    createMedicalRecordMutation.mutate(createFormData);
+
+    if (formData.id) {
+      console.log("id", formData.id);
+      // Nếu có ID, là chỉnh sửa
+      updateMedicalRecordMutation.mutate({ ...body, id: formData.id });
+    } else {
+      // Không có ID là tạo mới
+      createMedicalRecordMutation.mutate(body);
+    }
   };
 
   return (
@@ -195,45 +239,50 @@ export default function SetMedicalRecordScreen() {
                 </View>
               </View>
             </Modal>
-            {/* Button chọn ảnh */}
-            <Button title="Tải ảnh bệnh án" onPress={handleUploadImage} />
-
-            {/* Hiển thị ảnh demo sau khi upload */}
-            {isUploading && (
-              <View style={styles.loadingOverlay}>
-                <ActivityIndicator size="large" color="#2260FF" />
-              </View>
-            )}
-
-            {!isUploading && formData.resourceUrl ? (
-              <>
-                <Pressable onPress={() => setShowImageViewer(true)}>
-                  <Image
-                    source={{ uri: formData.resourceUrl }}
-                    style={styles.imagePreview}
-                  />
-                </Pressable>
-
-                <RNModal
-                  isVisible={showImageViewer}
-                  onBackdropPress={() => setShowImageViewer(false)}
-                  style={{
-                    justifyContent: "center",
-                    margin: 0,
-                  }}
-                >
-                  <ImageViewer
-                    imageUrls={[{ url: formData.resourceUrl }]}
-                    enableSwipeDown
-                    onSwipeDown={() => setShowImageViewer(false)}
-                    backgroundColor="#000"
-                  />
-                </RNModal>
-              </>
-            ) : null}
           </>
         )}
       </View>
+      {/* Button chọn ảnh */}
+      <Button title="Tải ảnh bệnh án" onPress={handleUploadImage} />
+
+      {/* Hiển thị ảnh demo sau khi upload */}
+      {isUploading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#2260FF" />
+        </View>
+      )}
+
+      {!isUploading && formData.resourceUrl ? (
+        <>
+          <Pressable onPress={() => setShowImageViewer(true)}>
+            <Image
+              source={{ uri: formData.resourceUrl }}
+              style={styles.imagePreview}
+            />
+          </Pressable>
+
+          <RNModal
+            isVisible={showImageViewer}
+            onBackdropPress={() => setShowImageViewer(false)}
+            style={{
+              justifyContent: "center",
+              margin: 0,
+            }}
+          >
+            <ImageViewer
+              imageUrls={[{ url: formData.resourceUrl }]}
+              enableSwipeDown
+              onSwipeDown={() => setShowImageViewer(false)}
+              backgroundColor="#ECF1FF"
+              loadingRender={() => (
+                <View style={styles.modalImageLoading}>
+                  <ActivityIndicator size="large" color="#2260FF" />
+                </View>
+              )}
+            />
+          </RNModal>
+        </>
+      ) : null}
       <View style={styles.fixedButtonContainer}>
         <TouchableOpacity
           style={styles.buttonEditMedical}
@@ -253,7 +302,7 @@ const styles = StyleSheet.create({
   },
   imagePreview: {
     width: "100%",
-    height: 400,
+    height: 300,
     resizeMode: "contain",
     // marginTop: 12,
     borderRadius: 12,
@@ -332,5 +381,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.6)", // mờ nền
     zIndex: 999,
+  },
+  modalImageLoading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

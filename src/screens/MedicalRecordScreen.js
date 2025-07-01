@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -14,19 +15,41 @@ import TextDate from "../components/TextDate";
 import { useNavigation } from "@react-navigation/native";
 import SearchIcon from "../assets/search_icon.svg";
 import { Ionicons } from "react-native-vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import medicalRecordApi from "../apis/MedicalRecordApi";
 import { MedicalRecordType } from "../constants/enum";
 import { getTypeLabel } from "../utils/utils";
+import Toast from "react-native-toast-message";
 
 export default function MedicalRecordScreen() {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState("");
+  const queryClient = useQueryClient();
 
   const { data: medicalRecordData } = useQuery({
     queryKey: ["medical-record"],
     queryFn: () => medicalRecordApi.getMedicalRecord(),
     refetchOnMount: true,
+  });
+
+  const deleteMediaRecordMutation = useMutation({
+    mutationFn: (id) => medicalRecordApi.deleteMedicalRecord(id),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Thành công!",
+        text2: "Xóa thông tin thành công!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["medical-record"] });
+    },
+    onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Thất bại!",
+        text2: "Vui lòng thử lại!",
+      });
+      console.log(error, "error");
+    },
   });
 
   const buttons = [
@@ -91,46 +114,96 @@ export default function MedicalRecordScreen() {
           contentContainerStyle={{ paddingBottom: 170 }}
         >
           <View style={styles.viewContentMedicalRecord}>
-            {filteredRecords?.map((record) => {
-              const createdDate = new Date(record.createdTime);
-              const day = createdDate.toLocaleDateString("vi-VN", {
-                weekday: "long",
-              });
-              const date = createdDate.toLocaleDateString("vi-VN");
+            {filteredRecords.length > 0 ? (
+              filteredRecords.map((record) => {
+                const createdDate = new Date(record.createdTime);
+                const day = createdDate.toLocaleDateString("vi-VN", {
+                  weekday: "long",
+                });
+                const date = createdDate.toLocaleDateString("vi-VN");
+                return (
+                  <View
+                    key={record.id}
+                    style={styles.viewContentMedicalRecordItem}
+                  >
+                    <View style={styles.viewContentMedicalRecordItemImage}>
+                      <Image
+                        source={{ uri: record.resourceUrl }}
+                        style={styles.imageMedicalRecord}
+                      />
+                    </View>
+                    <View style={styles.viewContentMedicalRecordItemText}>
+                      <Text style={styles.textMedicalRecord}>
+                        {record.title}
+                      </Text>
+                      <Text>{getTypeLabel(record.type)}</Text>
+                      <View style={styles.viewContentMedicalRecordItemTextDate}>
+                        <TextDate
+                          style={{ padding: 4 }}
+                          day={day}
+                          date={date}
+                        />
 
-              return (
-                <View
-                  key={record.id}
-                  style={styles.viewContentMedicalRecordItem}
-                >
-                  <View style={styles.viewContentMedicalRecordItemImage}>
-                    <Image
-                      source={{ uri: record.resourceUrl }}
-                      style={styles.imageMedicalRecord}
-                    />
-                  </View>
-                  <View style={styles.viewContentMedicalRecordItemText}>
-                    <Text style={styles.textMedicalRecord}>{record.title}</Text>
-                    <Text>{getTypeLabel(record.type)}</Text>
-                    <View style={styles.viewContentMedicalRecordItemTextDate}>
-                      <TextDate style={{ padding: 4 }} day={day} date={date} />
-                      <TouchableOpacity
-                        style={styles.buttonDetailMedicalRecord}
-                        onPress={() =>
-                          navigation.navigate("DetailMedical", {
-                            id: record.id,
-                          })
-                        }
-                      >
-                        <Text style={styles.textDetailMedicalRecord}>
-                          Chi Tiết
-                        </Text>
-                      </TouchableOpacity>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          {/* Nút Chi Tiết */}
+                          <TouchableOpacity
+                            style={[
+                              styles.buttonDetailMedicalRecord,
+                              { flex: 9 },
+                            ]}
+                            onPress={() =>
+                              navigation.navigate("DetailMedical", {
+                                id: record.id,
+                              })
+                            }
+                          >
+                            <Text style={styles.textDetailMedicalRecord}>
+                              Chi Tiết
+                            </Text>
+                          </TouchableOpacity>
+
+                          {/* Nút X xoá/tròn trắng */}
+                          <TouchableOpacity
+                            style={[styles.buttonCloseCircle, { flex: 0 }]}
+                            onPress={() => {
+                              Alert.alert(
+                                "Xác nhận xoá",
+                                "Bạn có chắc chắn muốn xoá thông tin bệnh án này?",
+                                [
+                                  { text: "Huỷ", style: "cancel" },
+                                  {
+                                    text: "Xoá",
+                                    style: "destructive",
+                                    onPress: () => {
+                                      console.log(record.id);
+                                      deleteMediaRecordMutation.mutate(
+                                        record.id
+                                      );
+                                    },
+                                  },
+                                ]
+                              );
+                            }}
+                          >
+                            <Text style={styles.textClose}>✕</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
                     </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })
+            ) : (
+              <View style={styles.emptyView}>
+                <Text style={styles.emptyText}>Không có dữ liệu</Text>
+              </View>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -221,6 +294,27 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  buttonCloseCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 30,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    elevation: 2, // Android shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+  },
+  textClose: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "bold",
+    lineHeight: 16,
+  },
   floatingButton: {
     position: "absolute",
     bottom: 100,
@@ -265,5 +359,15 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     paddingVertical: 8,
     fontSize: 16,
+  },
+  emptyView: {
+    height: 600,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 20,
+    color: "#666",
+    fontStyle: "italic",
   },
 });

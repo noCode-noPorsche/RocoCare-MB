@@ -2,8 +2,10 @@ import pathAPI from "../constants/path";
 import http from "../utils/http";
 
 const medicalRecordApi = {
-  getMedicalRecord() {
-    return http.get(pathAPI.medicalRecord);
+  getMedicalRecord(params) {
+    return http.get(pathAPI.medicalRecord, {
+      params,
+    });
   },
   createMedicalRecord(body) {
     return http.post(pathAPI.medicalRecord, body);
