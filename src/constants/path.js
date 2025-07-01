@@ -8,6 +8,7 @@ const pathAPI = {
   healthMetric: "/health-metric",
   medicalRecord: "/medical-record",
   userSchedule: "/userschedule",
+  emergencyCall: "/emergency-call",
 };
 
 export default pathAPI;

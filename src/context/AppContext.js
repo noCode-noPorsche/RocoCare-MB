@@ -8,6 +8,11 @@ const initialAppContext = {
   profile: getProfileFromLS(),
   setProfile: () => null,
   reset: () => null,
+  emergencyContacts: {
+    phoneNumber1: "",
+    phoneNumber2: "",
+  },
+  setEmergencyContacts: () => null,
 };
 
 export const AppContext = createContext(initialAppContext);
@@ -18,8 +23,17 @@ export const AppProvider = ({ children }) => {
   );
   const [profile, setProfile] = useState(initialAppContext.profile);
 
+  const [emergencyContacts, setEmergencyContacts] = useState({
+    phoneNumber1: "",
+    phoneNumber2: "",
+  });
+
   const reset = () => {
     setIsAuthenticated(false);
+    setEmergencyContacts({
+      phoneNumber1: "",
+      phoneNumber2: "",
+    });
     setProfile(null);
     clearLS();
   };
@@ -52,6 +66,8 @@ export const AppProvider = ({ children }) => {
         profile,
         setProfile,
         reset,
+        emergencyContacts,
+        setEmergencyContacts,
       }}
     >
       {children}

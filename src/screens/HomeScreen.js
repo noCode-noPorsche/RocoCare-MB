@@ -25,7 +25,7 @@ import { AppContext } from "../context/AppContext";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const { profile } = useContext(AppContext);
+  const { profile, emergencyContacts } = useContext(AppContext);
 
   const showConfirmAlert = () => {
     Alert.alert(
@@ -59,7 +59,7 @@ export default function HomeScreen() {
         {
           text: "Gọi ngay",
           onPress: () => {
-            const emergencyNumber = "115"; // Thay đổi theo nhu cầu
+            const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
             Linking.openURL(`tel:${emergencyNumber}`);
           },
         },
