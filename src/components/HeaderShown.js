@@ -1,18 +1,25 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "../assets/arrow_left";
 import { useNavigation } from "@react-navigation/native";
+import ArrowLeftWhiteIcon from "../assets/arrow_left_white.svg";
 
-export default function HeaderShown({ HeaderName, iconBack = true, style }) {
+export default function HeaderShown({
+  HeaderName,
+  iconBack = true,
+  style,
+  iconType = "blue",
+}) {
   const navigation = useNavigation();
+  const ArrowIcon = iconType === "white" ? ArrowLeftWhiteIcon : ArrowLeftIcon;
   return (
     <View style={[styles.viewHeader, style]}>
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.iconHeaderBack}
       >
-        {iconBack && <ArrowLeftIcon width={20} heigh={20} />}
+        {iconBack && <ArrowIcon width={20} height={20} />}
       </TouchableOpacity>
-      <Text style={styles.textHeader}>{HeaderName}</Text>
+      <Text style={[styles.textHeader, style]}>{HeaderName}</Text>
     </View>
   );
 }
