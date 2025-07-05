@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -14,6 +14,8 @@ import ArrowLeftIcon from "../assets/arrow_left.svg";
 import ArrowRightIcon from "../assets/arrow_right.svg";
 import ArrowDownIcon from "../assets/arrow_down.svg";
 import TimeTableSchedule from "./TimeTableSchedule";
+import "moment/locale/vi"; // import locale tiếng Việt
+moment.locale("vi"); // thiết lập ngôn ngữ toàn cục
 
 export default function CalendarStrip({
   onMonthChange,
@@ -69,6 +71,12 @@ export default function CalendarStrip({
   };
 
   const renderItem = ({ item }) => {
+    const getVietnameseDayAbbreviation = (momentDate) => {
+      const day = momentDate.day(); // 0: Sunday, 1: Monday, ..., 6: Saturday
+
+      if (day === 0) return "CN"; // Chủ nhật
+      return `T${day + 1}`; // Thứ 2 -> Thứ 7
+    };
     const isSelected = item.isSame(selectedDate, "day");
     return (
       <TouchableOpacity
@@ -95,11 +103,15 @@ export default function CalendarStrip({
             isSelected ? styles.weekTextSelected : styles.weekTextUnselected,
           ]}
         >
-          {item.format("dd").toUpperCase()}
+          {getVietnameseDayAbbreviation(item)}{" "}
         </Text>
       </TouchableOpacity>
     );
   };
+
+  // useEffect(() => {
+  //   moment.locale("vi");
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -163,7 +175,9 @@ export default function CalendarStrip({
           </TouchableOpacity>
         )}
       </View>
-      {!hideTimeTableSchedule && <TimeTableSchedule />}
+      {!hideTimeTableSchedule && (
+        <TimeTableSchedule selectedDate={selectedDate} />
+      )}
     </View>
   );
 }

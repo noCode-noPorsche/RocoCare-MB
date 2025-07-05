@@ -1,20 +1,43 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import HeaderShown from "../components/HeaderShown";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 export default function DetailCalendarScreen() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { schedule } = route.params || {};
+  const time = schedule?.time ? new Date(schedule.time) : new Date();
+
+  const dateString = time.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const hour = time.getHours();
+  const minute = time.getMinutes().toString().padStart(2, "0");
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const timeString = `${formattedHour}:${minute} ${ampm}`;
+
   return (
     <SafeAreaViewCustom>
       <HeaderShown HeaderName={"Chi Tiết Lịch Trình"} />
-      <View style={[styles.horizontalLineContainer, { marginTop: 16 }]}>
+      <Text style={styles.scheduleTitle}>
+        {schedule?.title || "Không có tiêu đề"}
+      </Text>
+      <View style={[styles.horizontalLineContainer, { marginTop: 4 }]}>
         <View style={styles.horizontalLine} />
       </View>
       <View style={styles.viewDate}>
-        <Text style={styles.textDate}>18 Tháng 5, 2025</Text>
+        <Text style={styles.textDate}>{dateString}</Text>
       </View>
       <View style={styles.viewTime}>
-        <Text style={styles.textTime}>10: 00 AM</Text>
-        <Text style={styles.textType}>Mỗi Tuần</Text>
+        <Text style={styles.textTime}>{timeString}</Text>
+        <Text style={styles.textType}>
+          {schedule?.type || "Không xác định"}
+        </Text>
       </View>
       <View style={styles.horizontalLineContainer}>
         <View style={styles.horizontalLine} />
@@ -22,15 +45,21 @@ export default function DetailCalendarScreen() {
       <View style={styles.viewInformation}>
         <View style={styles.viewInformationName}>
           <Text style={styles.textInformationTitle}>Họ Và Tên</Text>
-          <Text style={styles.textInformationContent}>Dustin</Text>
+          <Text style={styles.textInformationContent}>
+            {schedule?.fullName || "Chưa có"}
+          </Text>
         </View>
         <View style={styles.viewInformationAge}>
           <Text style={styles.textInformationTitle}>Tuổi</Text>
-          <Text style={styles.textInformationContent}>22</Text>
+          <Text style={styles.textInformationContent}>
+            {schedule?.age || "--"}
+          </Text>
         </View>
         <View style={styles.viewInformationGender}>
           <Text style={styles.textInformationTitle}>Giới Tính</Text>
-          <Text style={styles.textInformationContent}>Nam</Text>
+          <Text style={styles.textInformationContent}>
+            {schedule?.gender || "--"}
+          </Text>
         </View>
       </View>
       <View style={styles.horizontalLineContainer}>
@@ -39,10 +68,17 @@ export default function DetailCalendarScreen() {
       <View style={styles.viewNote}>
         <Text style={styles.textNoteTitle}>Ghi Chú</Text>
         <Text style={styles.textNoteContent}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-          quos.
+          {schedule?.description || "Không có ghi chú."}
         </Text>
       </View>
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() =>
+          navigation.navigate("SetCalendar", { scheduleToEdit: schedule })
+        }
+      >
+        <Text style={styles.editButtonText}>Chỉnh Sửa</Text>
+      </TouchableOpacity>
     </SafeAreaViewCustom>
   );
 }
@@ -120,5 +156,29 @@ const styles = StyleSheet.create({
   },
   textNoteContent: {
     fontSize: 20,
+  },
+  scheduleTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#2260FF",
+    textAlign: "center",
+    // marginTop: 12,
+    // marginBottom: 8,
+  },
+  editButton: {
+    position: "absolute",
+    bottom: 36,
+    left: 24,
+    right: 24,
+    backgroundColor: "#2260FF",
+    paddingVertical: 16,
+    paddingHorizontal: 80,
+    borderRadius: 32,
+    alignItems: "center",
+  },
+  editButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

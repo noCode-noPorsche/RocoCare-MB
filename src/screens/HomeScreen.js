@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
   Alert,
   Image,
@@ -23,11 +23,27 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
 import { AppContext } from "../context/AppContext";
 import HighlightCard from "../components/Test";
+import scheduleApi from "../apis/ScheduleApi";
+import moment from "moment";
+import TimeTableSchedule from "../components/TimeTableSchedule";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const [selectedDate, setSelectedDate] = useState(moment());
+
   const { profile, emergencyContacts } = useContext(AppContext);
 
+  const { data: userScheduleResult } = useQuery({
+    queryKey: ["user-schedule"],
+    queryFn: () => scheduleApi.getSchedule({ pageSize: 100 }),
+  });
+
+  const filteredSchedule =
+    userScheduleResult?.data?.data?.items?.filter((item) => {
+      const scheduleDate = moment(item.time); // giả sử field là `date`
+      return scheduleDate.isSame(selectedDate, "day");
+    }) || [];
+  console.log(filteredSchedule);
   const showConfirmAlert = () => {
     Alert.alert(
       "Xác nhận",
@@ -113,11 +129,16 @@ export default function HomeScreen() {
       </View>
       <View style={styles.viewCalendar}>
         <CalendarStrip
+          onDateChange={(date) => setSelectedDate(date)} // nhận ngày chọn
           timeTableSchedule={true}
           hideMonthPicker={true}
           hideNavigation={true}
         />
         {/* <TimeTableSchedule /> */}
+        {/* <TimeTableSchedule
+          selectedDate={selectedDate}
+          scheduleList={filteredSchedule}
+        /> */}
       </View>
       <ScrollView
         vertical

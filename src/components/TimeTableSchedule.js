@@ -3,48 +3,74 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 
-export default function TimeTableSchedule({ selectedDate }) {
+// export default function TimeTableSchedule({ selectedDate }) {
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.selectedDateLabel}>
+//         Hôm Nay, {moment(selectedDate).format("DD.MM.YYYY")}
+//       </Text>
+//       {/* Header */}
+//       <View style={styles.headerLine}>
+//         <Text style={styles.timeText}>9 AM</Text>
+//         <View style={styles.dottedLine} />
+//       </View>
+
+//       {/* Appointment at 10 AM */}
+//       <View style={styles.appointmentContainer}>
+//         <Text style={styles.timeText}>10 AM</Text>
+//         <View style={styles.appointmentBox}>
+//           <View style={{ flex: 1 }}>
+//             <Text style={styles.doctorName}>Dr. Olivia Turner, M.D.</Text>
+//             <Text style={styles.description}>
+//               Phát hiện bất thường ở người dùng
+//             </Text>
+//           </View>
+//           <View style={styles.iconContainer}>
+//             <TouchableOpacity style={styles.circleButton}>
+//               <Ionicons name="checkmark" size={14} color="#2260FF" />
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.circleButton}>
+//               <Ionicons name="close" size={14} color="#2260FF" />
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </View>
+
+//       {/* Other times */}
+//       <View style={styles.headerLine}>
+//         <Text style={styles.timeText}>11 AM</Text>
+//         <View style={styles.dottedLine} />
+//       </View>
+//       <View style={styles.headerLine}>
+//         <Text style={styles.timeText}>12 AM</Text>
+//         <View style={styles.dottedLine} />
+//       </View>
+//     </View>
+//   );
+// }
+
+export default function TimeTableSchedule({
+  selectedDate = moment(),
+  scheduleList = [],
+}) {
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.selectedDateLabel}>
-        Hôm Nay, {moment(selectedDate).format("DD.MM.YYYY")}
+        Hôm nay, {moment(selectedDate).format("DD.MM.YYYY")}
       </Text>
-      {/* Header */}
-      <View style={styles.headerLine}>
-        <Text style={styles.timeText}>9 AM</Text>
-        <View style={styles.dottedLine} />
-      </View>
 
-      {/* Appointment at 10 AM */}
-      <View style={styles.appointmentContainer}>
-        <Text style={styles.timeText}>10 AM</Text>
-        <View style={styles.appointmentBox}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.doctorName}>Dr. Olivia Turner, M.D.</Text>
-            <Text style={styles.description}>
-              Phát hiện bất thường ở người dùng
-            </Text>
+      {scheduleList.length === 0 ? (
+        <Text style={{ marginTop: 10, color: "gray" }}>
+          Không có lịch trình
+        </Text>
+      ) : (
+        scheduleList.map((item) => (
+          <View key={item.id} style={styles.appointmentBox}>
+            <Text style={styles.doctorName}>{item.title}</Text>
+            <Text>{moment(item.date).format("HH:mm")}</Text>
           </View>
-          <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.circleButton}>
-              <Ionicons name="checkmark" size={14} color="#2260FF" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.circleButton}>
-              <Ionicons name="close" size={14} color="#2260FF" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      {/* Other times */}
-      <View style={styles.headerLine}>
-        <Text style={styles.timeText}>11 AM</Text>
-        <View style={styles.dottedLine} />
-      </View>
-      <View style={styles.headerLine}>
-        <Text style={styles.timeText}>12 AM</Text>
-        <View style={styles.dottedLine} />
-      </View>
+        ))
+      )}
     </View>
   );
 }

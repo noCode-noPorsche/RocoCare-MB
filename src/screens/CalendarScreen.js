@@ -9,93 +9,98 @@ import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import HeaderShown from "../components/HeaderShown";
 import CalendarStrip from "../components/CalendarStrip";
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import scheduleApi from "../apis/ScheduleApi";
+import { useMemo, useState } from "react";
+import moment from "moment";
 
 export default function CalendarScreen() {
   const navigation = useNavigation();
+  const [selectedDate, setSelectedDate] = useState(moment());
+
+  const { data: userScheduleResult } = useQuery({
+    queryKey: ["user-schedule"],
+    queryFn: () => scheduleApi.getSchedule({ pageSize: 100 }),
+  });
+  const schedules = userScheduleResult?.data?.data?.items || [];
+  // console.log();
+  const filteredSchedules = useMemo(() => {
+    return schedules.filter((schedule) => {
+      const scheduleDate = moment(schedule.time);
+      return scheduleDate.isSame(selectedDate, "day");
+    });
+  }, [schedules, selectedDate]);
+
   return (
     <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
       <HeaderShown HeaderName={"Lịch Trình"} iconBack={false} />
       <View style={styles.viewCalendarStrip}>
-        <CalendarStrip hideTimeTableSchedule={true} />
+        <CalendarStrip
+          hideTimeTableSchedule={true}
+          onDateChange={(date) => setSelectedDate(date)}
+        />
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 16 }}
       >
-        <View style={styles.viewCalendar}>
-          <View style={styles.viewCalendarTime}>
-            <Text style={styles.textTime}>10 AM</Text>
+        {filteredSchedules.length === 0 ? (
+          <View style={styles.noScheduleContainer}>
+            <Text style={styles.noScheduleText}>
+              Không có lịch nào cho ngày hôm nay.
+            </Text>
           </View>
-          <View style={styles.viewCalendarItem}>
-            <Text style={styles.textCalendarTitle}>Lịch trình</Text>
-            <Text style={styles.textCalendarDescription}>18/05/2025</Text>
-            <View style={styles.viewCalendarItemButton}>
-              <TouchableOpacity
-                style={styles.buttonDetailCalendar}
-                onPress={() => navigation.navigate("DetailCalendar")}
-              >
-                <Text style={styles.textButtonDetailCalendar}>Chi tiết</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.buttonEditCalendar}
-                onPress={() => navigation.navigate("SetCalendar")}
-              >
-                <Text style={styles.textButtonEditCalendar}>Chỉnh Sửa</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.viewCalendar}>
-          <View style={styles.viewCalendarTime}>
-            <Text style={styles.textTime}>10 AM</Text>
-          </View>
-          <View style={styles.viewCalendarItem}>
-            <Text style={styles.textCalendarTitle}>Lịch trình</Text>
-            <Text style={styles.textCalendarDescription}>18/05/2025</Text>
-            <View style={styles.viewCalendarItemButton}>
-              <TouchableOpacity style={styles.buttonDetailCalendar}>
-                <Text style={styles.textButtonDetailCalendar}>Chi tiết</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonEditCalendar}>
-                <Text style={styles.textButtonEditCalendar}>Chỉnh Sửa</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.viewCalendar}>
-          <View style={styles.viewCalendarTime}>
-            <Text style={styles.textTime}>10 AM</Text>
-          </View>
-          <View style={styles.viewCalendarItem}>
-            <Text style={styles.textCalendarTitle}>Lịch trình</Text>
-            <Text style={styles.textCalendarDescription}>18/05/2025</Text>
-            <View style={styles.viewCalendarItemButton}>
-              <TouchableOpacity style={styles.buttonDetailCalendar}>
-                <Text style={styles.textButtonDetailCalendar}>Chi tiết</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonEditCalendar}>
-                <Text style={styles.textButtonEditCalendar}>Chỉnh Sửa</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.viewCalendar}>
-          <View style={styles.viewCalendarTime}>
-            <Text style={styles.textTime}>10 AM</Text>
-          </View>
-          <View style={styles.viewCalendarItem}>
-            <Text style={styles.textCalendarTitle}>Lịch trình</Text>
-            <Text style={styles.textCalendarDescription}>18/05/2025</Text>
-            <View style={styles.viewCalendarItemButton}>
-              <TouchableOpacity style={styles.buttonDetailCalendar}>
-                <Text style={styles.textButtonDetailCalendar}>Chi tiết</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonEditCalendar}>
-                <Text style={styles.textButtonEditCalendar}>Chỉnh Sửa</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        ) : (
+          filteredSchedules.map((schedule, index) => {
+            const time = new Date(schedule.time);
+            const hour = time.getHours();
+            const minute = time.getMinutes();
+
+            const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+            const formattedMinute = minute.toString().padStart(2, "0");
+            const ampm = hour >= 12 ? "PM" : "AM";
+
+            return (
+              <View key={index} style={styles.viewCalendar}>
+                <View style={styles.viewCalendarTime}>
+                  <Text style={styles.textTime}>
+                    {formattedHour}:{formattedMinute} {ampm}
+                  </Text>
+                </View>
+                <View style={styles.viewCalendarItem}>
+                  <Text style={styles.textCalendarTitle}>{schedule.title}</Text>
+                  <Text style={styles.textCalendarDescription}>
+                    {schedule.description}
+                  </Text>
+                  <View style={styles.viewCalendarItemButton}>
+                    <TouchableOpacity
+                      style={styles.buttonDetailCalendar}
+                      onPress={() =>
+                        navigation.navigate("DetailCalendar", { schedule })
+                      }
+                    >
+                      <Text style={styles.textButtonDetailCalendar}>
+                        Chi tiết
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.buttonEditCalendar}
+                      onPress={() =>
+                        navigation.navigate("SetCalendar", {
+                          scheduleToEdit: schedule,
+                        })
+                      }
+                    >
+                      <Text style={styles.textButtonEditCalendar}>
+                        Chỉnh Sửa
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            );
+          })
+        )}
       </ScrollView>
       <TouchableOpacity
         style={styles.floatingButton}
@@ -210,5 +215,16 @@ const styles = StyleSheet.create({
     fontSize: 32,
     lineHeight: 32,
     fontWeight: "bold",
+  },
+  noScheduleContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 32,
+  },
+  noScheduleText: {
+    fontSize: 22,
+    color: "#999",
+    textAlign: "center",
   },
 });

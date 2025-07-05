@@ -1,5 +1,5 @@
 import { Picker } from "@react-native-picker/picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,9 +11,15 @@ import CalendarStrip from "../components/CalendarStrip";
 import HeaderShown from "../components/HeaderShown";
 import InputCustom from "../components/InputCustom";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
+import { useMutation } from "@tanstack/react-query";
+import scheduleApi from "../apis/ScheduleApi";
+import Toast from "react-native-toast-message";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import moment from "moment";
 
 export default function SetCalendarScreen() {
   const now = new Date();
+  const navigation = useNavigation();
   const defaultHour = (now.getHours() % 12 || 12).toString().padStart(2, "0");
   const defaultMinute = now.getMinutes().toString().padStart(2, "0");
   const defaultAMPM = now.getHours() >= 12 ? "PM" : "AM";
@@ -21,8 +27,10 @@ export default function SetCalendarScreen() {
   const [selectedDateFromStrip, setSelectedDateFromStrip] = useState(
     new Date()
   );
-  const [repeatType, setRepeatType] = useState("daily"); // "daily" | "weekly" | "monthly"
+  const [repeatType, setRepeatType] = useState("none"); //"none" | "daily" | "weekly" | "monthly"
 
+  const route = useRoute();
+  const { scheduleToEdit } = route.params || {};
   const openInlinePicker = (mode) => {
     setVisiblePicker(mode);
   };
@@ -32,8 +40,8 @@ export default function SetCalendarScreen() {
     description: "",
     fullName: "",
     age: "",
-    gender: "male",
-    isAllDay: true,
+    gender: "Nam",
+    type: 0,
     hour: defaultHour,
     minute: defaultMinute,
     ampm: defaultAMPM,
@@ -72,6 +80,12 @@ export default function SetCalendarScreen() {
 
     if (isPM && hour < 12) hour += 12;
     if (!isPM && hour === 12) hour = 0;
+    const repeatTypeMap = {
+      none: 0,
+      daily: 1,
+      weekly: 2,
+      monthly: 3,
+    };
 
     // Gán giờ phút vào ngày đã chọn
     selectedDate.setHours(hour);
@@ -85,13 +99,88 @@ export default function SetCalendarScreen() {
       fullName: formData.fullName,
       age: formData.age,
       gender: formData.gender,
-      isAllDay: formData.isAllDay,
       time: selectedDate.toISOString(),
+      type: repeatTypeMap[repeatType] ?? 0,
     };
   };
 
+  const createUserScheduleMutation = useMutation({
+    mutationFn: (body) => scheduleApi.createSchedule(body),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Tạo lịch thành công!",
+      });
+      navigation.navigate("Calendar");
+    },
+    onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Tạo lịch thất bại",
+      });
+      console.log("error schedule", error);
+      console.log("❌ Response Status:", error.response.status);
+      console.log("❌ Response Data:", error.response.data);
+      console.log("❌ Response Headers:", error.response.headers);
+    },
+  });
+
+  const handleSubmit = () => {
+    const payload = buildPayload();
+    console.log("🚀 Payload gửi về:", payload);
+    // Kiểm tra các trường bắt buộc
+    if (
+      !formData.title ||
+      !formData.fullName ||
+      !formData.age ||
+      !formData.gender ||
+      typeof formData.type !== "number"
+    ) {
+      Toast.show({
+        type: "info",
+        text1: "Vui lòng nhập đầy đủ thông tin bắt buộc!",
+      });
+      return;
+    }
+
+    console.log("🚀 Payload gửi về:", payload);
+    createUserScheduleMutation.mutate(payload);
+  };
+
+  useEffect(() => {
+    if (scheduleToEdit) {
+      const scheduleTime = moment(scheduleToEdit.time);
+      const hour = scheduleTime.hour();
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const displayHour = (hour % 12 || 12).toString().padStart(2, "0");
+      const minute = scheduleTime.minute().toString().padStart(2, "0");
+
+      setFormData({
+        title: scheduleToEdit.title || "",
+        description: scheduleToEdit.description || "",
+        fullName: scheduleToEdit.fullName || "",
+        age: scheduleToEdit.age?.toString() || "",
+        gender: scheduleToEdit.gender || "Nam",
+        type: scheduleToEdit.type ?? 0,
+        hour: displayHour,
+        minute: minute,
+        ampm: ampm,
+      });
+
+      setRepeatType(
+        ["none", "daily", "weekly", "monthly"][scheduleToEdit.type ?? 0] ||
+          "none"
+      );
+
+      setSelectedDateFromStrip(scheduleTime.toDate());
+      setSelectedTime(scheduleTime.toDate());
+    }
+  }, [scheduleToEdit]);
+
   return (
-    <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
+    <SafeAreaViewCustom
+      style={{ paddingLeft: 0, paddingRight: 0, paddingBottom: 0 }}
+    >
       <HeaderShown
         HeaderName={"Đặt Lịch Trình"}
         style={{ marginLeft: 16, marginRight: 16 }}
@@ -104,6 +193,7 @@ export default function SetCalendarScreen() {
           }}
         />
       </View>
+
       <ScrollView
         vertical
         showsVerticalScrollIndicator={false}
@@ -231,6 +321,26 @@ export default function SetCalendarScreen() {
             <TouchableOpacity
               style={[
                 styles.buttonType,
+                repeatType === "none"
+                  ? styles.selectedButtonType
+                  : styles.unselectedButtonType,
+              ]}
+              onPress={() => setRepeatType("none")}
+            >
+              <Text
+                style={[
+                  styles.textButtonType,
+                  repeatType === "none"
+                    ? styles.selectedTextButtonType
+                    : styles.unselectedTextButtonType,
+                ]}
+              >
+                Không Lặp
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.buttonType,
                 repeatType === "daily"
                   ? styles.selectedButtonType
                   : styles.unselectedButtonType,
@@ -291,36 +401,42 @@ export default function SetCalendarScreen() {
               </Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.horizontalLineContainer}>
+            <View style={styles.horizontalLine} />
+          </View>
           <View style={styles.viewInformation}>
             <Text style={styles.textDetail}>Chi tiết bệnh nhân</Text>
             <InputCustom
               onChangeText={(value) => updateFormData("title", value)}
               placeholder="Tiêu Đề"
               titleInput={"Tiêu Đề"}
+              value={formData.title}
             />
             <InputCustom
               onChangeText={(value) => updateFormData("fullName", value)}
               placeholder="Họ và Tên"
               titleInput={"Họ và Tên"}
+              value={formData.fullName}
             />
             <InputCustom
               onChangeText={(value) => updateFormData("age", value)}
               placeholder="Tuổi"
               titleInput={"Tuổi"}
+              value={formData.age}
             />
             <Text style={styles.textGender}>Giới Tính</Text>
             <View style={styles.viewGender}>
               <TouchableOpacity
                 style={[
                   styles.buttonGender,
-                  formData.gender === "male" && styles.selectedGenderButton,
+                  formData.gender === "Nam" && styles.selectedGenderButton,
                 ]}
-                onPress={() => updateFormData("gender", "male")}
+                onPress={() => updateFormData("gender", "Nam")}
               >
                 <Text
                   style={[
                     styles.textButtonGender,
-                    formData.gender === "male" && styles.selectedGenderText,
+                    formData.gender === "Nam" && styles.selectedGenderText,
                   ]}
                 >
                   Nam
@@ -329,14 +445,14 @@ export default function SetCalendarScreen() {
               <TouchableOpacity
                 style={[
                   styles.buttonGender,
-                  formData.gender === "female" && styles.selectedGenderButton,
+                  formData.gender === "Nữ" && styles.selectedGenderButton,
                 ]}
-                onPress={() => updateFormData("gender", "female")}
+                onPress={() => updateFormData("gender", "Nữ")}
               >
                 <Text
                   style={[
                     styles.textButtonGender,
-                    formData.gender === "female" && styles.selectedGenderText,
+                    formData.gender === "Nữ" && styles.selectedGenderText,
                   ]}
                 >
                   Nữ
@@ -352,6 +468,7 @@ export default function SetCalendarScreen() {
               onChangeText={(value) => updateFormData("description", value)}
               placeholder="Ghi Chú"
               titleInput={"Ghi Chú"}
+              value={formData.description}
               multiline={true}
               numberOfLines={10}
             />
@@ -359,21 +476,7 @@ export default function SetCalendarScreen() {
         </View>
       </ScrollView>
       <View style={styles.viewSaveButton}>
-        <TouchableOpacity
-          onPress={() => {
-            const payload = buildPayload();
-            console.log("🚀 Payload gửi về:", payload);
-            // Gửi về backend ở đây
-            // fetch("/api/calendar", {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //   },
-            //   body: JSON.stringify(payload),
-            // });
-          }}
-          style={styles.buttonSave}
-        >
+        <TouchableOpacity onPress={handleSubmit} style={styles.buttonSave}>
           <Text style={styles.textButtonSave}>Lưu</Text>
         </TouchableOpacity>
       </View>
@@ -474,23 +577,6 @@ const styles = StyleSheet.create({
   viewNote: {
     marginLeft: 16,
     marginRight: 16,
-  },
-  viewSaveButton: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#fff",
-  },
-  buttonSave: {
-    backgroundColor: "#2260FF",
-    paddingVertical: 12,
-    borderRadius: 36,
-    alignItems: "center",
-  },
-  textButtonSave: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   timeBox: {
     width: "40%",
@@ -609,5 +695,20 @@ const styles = StyleSheet.create({
   },
   unselectedTextButtonType: {
     color: "#2260FF",
+  },
+  viewSaveButton: {
+    paddingLeft: 100,
+    paddingRight: 100,
+  },
+  buttonSave: {
+    backgroundColor: "#2260FF",
+    paddingVertical: 16,
+    borderRadius: 36,
+    alignItems: "center",
+  },
+  textButtonSave: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
   },
 });
