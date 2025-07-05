@@ -1,4 +1,3 @@
-import React from "react";
 import {
   StyleSheet,
   Text,
@@ -17,6 +16,8 @@ export default function InputCustom({
   titleInput,
   editable = true,
   onPressInput,
+  multiline = false,
+  numberOfLines = 1,
 }) {
   return (
     <View style={styles.viewInputContainer}>
@@ -32,9 +33,14 @@ export default function InputCustom({
               value={value}
               onChangeText={onChangeText}
               secureTextEntry={secureTextEntry}
-              style={styles.inputTextCustom}
+              style={[
+                styles.inputTextCustom,
+                multiline && { minHeight: 100 }, // bạn có thể tách ra thành styles.inputTextArea nếu muốn
+              ]}
               editable={editable}
               pointerEvents={editable ? "auto" : "none"}
+              numberOfLines={numberOfLines}
+              multiline={multiline} //  Bắt buộc phải có dòng này
             />
             {icon && (
               <TouchableOpacity
@@ -85,9 +91,10 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     paddingLeft: 16,
-    paddingRight: 40, // chừa chỗ cho icon
+    paddingRight: 40,
     fontSize: 16,
     width: "100%",
+    textAlignVertical: "top", // ✅ fix placeholder + nội dung bắt đầu từ top
   },
   iconShowPassword: {
     position: "absolute",
@@ -95,5 +102,9 @@ const styles = StyleSheet.create({
     top: "40%",
     transform: [{ translateY: -10 }],
     padding: 4,
+  },
+  inputTextArea: {
+    minHeight: 100, // hoặc bạn có thể dùng height: 100
+    textAlignVertical: "top", // để nội dung bắt đầu từ phía trên
   },
 });

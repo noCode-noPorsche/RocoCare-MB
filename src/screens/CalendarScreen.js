@@ -16,7 +16,7 @@ export default function CalendarScreen() {
     <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
       <HeaderShown HeaderName={"Lịch Trình"} iconBack={false} />
       <View style={styles.viewCalendarStrip}>
-        <CalendarStrip />
+        <CalendarStrip hideTimeTableSchedule={true} />
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}

@@ -22,6 +22,7 @@ import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
 import { AppContext } from "../context/AppContext";
+import HighlightCard from "../components/Test";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -111,15 +112,19 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.viewCalendar}>
-        <CalendarStrip timeTableSchedule={true} />
+        <CalendarStrip
+          timeTableSchedule={true}
+          hideMonthPicker={true}
+          hideNavigation={true}
+        />
         {/* <TimeTableSchedule /> */}
       </View>
-
       <ScrollView
         vertical
         showsVerticalScrollIndicator={false}
         // contentContainerStyle={styles.viewCalendar}
       >
+        <HighlightCard />
         <View style={styles.viewHealthInformation}>
           <View style={styles.viewButtonHealth}>
             <TouchableOpacity style={styles.buttonHealth}>
