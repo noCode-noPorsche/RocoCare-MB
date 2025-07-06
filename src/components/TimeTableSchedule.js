@@ -1,7 +1,14 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+moment.locale("en");
 
 // export default function TimeTableSchedule({ selectedDate }) {
 //   return (
@@ -53,23 +60,76 @@ export default function TimeTableSchedule({
   selectedDate = moment(),
   scheduleList = [],
 }) {
+  // console.log(scheduleList, "timetable");
+  const hours = Array.from({ length: 12 }, (_, i) => 8 + i); // 8 AM -> 19 PM
+  const navigation = useNavigation();
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.selectedDateLabel}>
-        Hôm nay, {moment(selectedDate).format("DD.MM.YYYY")}
+        {moment(selectedDate).isSame(moment(), "day")
+          ? `Hôm nay, ${moment(selectedDate).format("DD.MM.YYYY")}`
+          : moment(selectedDate).format("DD.MM.YYYY")}
       </Text>
-
+      <View style={styles.underline} />
       {scheduleList.length === 0 ? (
         <Text style={{ marginTop: 10, color: "gray" }}>
           Không có lịch trình
         </Text>
       ) : (
-        scheduleList.map((item) => (
-          <View key={item.id} style={styles.appointmentBox}>
-            <Text style={styles.doctorName}>{item.title}</Text>
-            <Text>{moment(item.date).format("HH:mm")}</Text>
-          </View>
-        ))
+        <View style={styles.scrollWrapper}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {scheduleList.map((item, index) => (
+              <View key={item.id}>
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() =>
+                    navigation.navigate("DetailCalendar", { schedule: item })
+                  }
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.appointmentContainer}>
+                    <Text style={styles.timeText}>
+                      {moment(item.time).format("hh:mm A")}
+                    </Text>
+
+                    <View style={styles.appointmentBox}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.doctorName}>{item.title}</Text>
+                        <Text
+                          numberOfLines={2}
+                          ellipsizeMode="tail"
+                          style={styles.description}
+                        >
+                          {item.description}
+                        </Text>
+                      </View>
+                      <View style={styles.iconContainer}>
+                        <TouchableOpacity style={styles.circleButton}>
+                          <Ionicons
+                            name="checkmark"
+                            size={14}
+                            color="#2260FF"
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.circleButton}>
+                          <Ionicons name="close" size={14} color="#2260FF" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+
+                  {index < scheduleList.length - 1 && (
+                    <View style={styles.divider} />
+                  )}
+                </TouchableOpacity>
+
+                {/* {index < scheduleList.length - 1 && (
+                  <View style={styles.divider} />
+                )} */}
+              </View>
+            ))}
+          </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -80,9 +140,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 16,
     borderRadius: 20,
-    marginTop: 16,
+    // marginTop: 16,
     marginLeft: 2,
     marginRight: 2,
+    paddingHorizontal: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   headerLine: {
     flexDirection: "row",
@@ -90,10 +153,13 @@ const styles = StyleSheet.create({
     // marginVertical: 6,
   },
   timeText: {
-    width: 50,
+    width: 70,
     fontSize: 14,
     color: "#2260FF",
     fontWeight: "500",
+  },
+  scrollWrapper: {
+    maxHeight: 140, // đủ để hiển thị 2 lịch
   },
   dottedLine: {
     flex: 1,
@@ -144,5 +210,25 @@ const styles = StyleSheet.create({
     textAlign: "right",
     fontSize: 16,
     color: "#2260FF",
+  },
+  description: {
+    color: "#000",
+    fontSize: 13,
+    lineHeight: 18,
+    height: 36, // 2 lines x 18 lineHeight
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    numberOfLines: 2,
+  },
+  underline: {
+    borderBottomColor: "#2260FF",
+    borderBottomWidth: 1,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ccc",
+    marginVertical: 4,
   },
 });

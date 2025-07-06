@@ -16,6 +16,7 @@ import scheduleApi from "../apis/ScheduleApi";
 import Toast from "react-native-toast-message";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
+import { Alert } from "react-native";
 
 export default function SetCalendarScreen() {
   const now = new Date();
@@ -93,15 +94,34 @@ export default function SetCalendarScreen() {
     selectedDate.setSeconds(0);
     selectedDate.setMilliseconds(0);
 
-    return {
+    const payload = {
       title: formData.title,
       description: formData.description,
       fullName: formData.fullName,
       age: formData.age,
       gender: formData.gender,
       time: selectedDate.toISOString(),
-      type: repeatTypeMap[repeatType] ?? 0,
     };
+
+    if (!scheduleToEdit) {
+      const repeatTypeMap = {
+        none: 0,
+        daily: 1,
+        weekly: 2,
+        monthly: 3,
+      };
+      payload.type = repeatTypeMap[repeatType] ?? 0;
+    }
+    return payload;
+    // return {
+    //   title: formData.title,
+    //   description: formData.description,
+    //   fullName: formData.fullName,
+    //   age: formData.age,
+    //   gender: formData.gender,
+    //   time: selectedDate.toISOString(),
+    //   type: repeatTypeMap[repeatType] ?? 0,
+    // };
   };
 
   const createUserScheduleMutation = useMutation({
@@ -117,6 +137,27 @@ export default function SetCalendarScreen() {
       Toast.show({
         type: "error",
         text1: "Tạo lịch thất bại",
+      });
+      console.log("error schedule", error);
+      console.log("❌ Response Status:", error.response.status);
+      console.log("❌ Response Data:", error.response.data);
+      console.log("❌ Response Headers:", error.response.headers);
+    },
+  });
+
+  const updateUserScheduleMutation = useMutation({
+    mutationFn: ({ id, body }) => scheduleApi.updateSchedule(id, body),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Cập nhật lịch thành công!",
+      });
+      navigation.navigate("Calendar");
+    },
+    onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Cập nhật lịch thất bại",
       });
       console.log("error schedule", error);
       console.log("❌ Response Status:", error.response.status);
@@ -143,8 +184,49 @@ export default function SetCalendarScreen() {
       return;
     }
 
-    console.log("🚀 Payload gửi về:", payload);
-    createUserScheduleMutation.mutate(payload);
+    if (scheduleToEdit) {
+      // Nếu đang sửa -> hỏi người dùng
+      Alert.alert(
+        "Cập nhật lịch trình",
+        "Bạn muốn cập nhật chỉ lịch này hay tất cả các lịch cùng nhóm?",
+        [
+          {
+            text: "Chỉ lịch này",
+            onPress: () => {
+              const updatePayload = {
+                ...payload,
+                isBatchUpdate: false,
+                // id: scheduleToEdit.id,
+              };
+              // console.log(updatePayload, " here");
+              // console.log(scheduleToEdit.id, "id");
+              updateUserScheduleMutation.mutate({
+                id: scheduleToEdit.id,
+                body: updatePayload,
+              });
+            },
+          },
+          {
+            text: "Tất cả lịch cùng nhóm",
+            onPress: () => {
+              const updatePayload = {
+                ...payload,
+                isBatchUpdate: true,
+                // groupId: scheduleToEdit.groupId,
+              };
+              updateUserScheduleMutation.mutate({
+                id: scheduleToEdit.groupId,
+                body: updatePayload,
+              });
+            },
+          },
+          { text: "Huỷ", style: "cancel" },
+        ]
+      );
+    } else {
+      // Tạo mới
+      createUserScheduleMutation.mutate(payload);
+    }
   };
 
   useEffect(() => {
@@ -317,90 +399,96 @@ export default function SetCalendarScreen() {
               </View>
             </View>
           </View>
-          <View style={styles.viewButtonType}>
-            <TouchableOpacity
-              style={[
-                styles.buttonType,
-                repeatType === "none"
-                  ? styles.selectedButtonType
-                  : styles.unselectedButtonType,
-              ]}
-              onPress={() => setRepeatType("none")}
-            >
-              <Text
+          {!scheduleToEdit && (
+            <View style={styles.viewButtonType}>
+              <TouchableOpacity
                 style={[
-                  styles.textButtonType,
+                  styles.buttonType,
                   repeatType === "none"
-                    ? styles.selectedTextButtonType
-                    : styles.unselectedTextButtonType,
+                    ? styles.selectedButtonType
+                    : styles.unselectedButtonType,
                 ]}
+                onPress={() => setRepeatType("none")}
               >
-                Không Lặp
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.buttonType,
-                repeatType === "daily"
-                  ? styles.selectedButtonType
-                  : styles.unselectedButtonType,
-              ]}
-              onPress={() => setRepeatType("daily")}
-            >
-              <Text
+                <Text
+                  style={[
+                    styles.textButtonType,
+                    repeatType === "none"
+                      ? styles.selectedTextButtonType
+                      : styles.unselectedTextButtonType,
+                  ]}
+                >
+                  Không Lặp
+                </Text>
+              </TouchableOpacity>
+
+              {/* Daily */}
+              <TouchableOpacity
                 style={[
-                  styles.textButtonType,
+                  styles.buttonType,
                   repeatType === "daily"
-                    ? styles.selectedTextButtonType
-                    : styles.unselectedTextButtonType,
+                    ? styles.selectedButtonType
+                    : styles.unselectedButtonType,
                 ]}
+                onPress={() => setRepeatType("daily")}
               >
-                Mỗi Ngày
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.textButtonType,
+                    repeatType === "daily"
+                      ? styles.selectedTextButtonType
+                      : styles.unselectedTextButtonType,
+                  ]}
+                >
+                  Mỗi Ngày
+                </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.buttonType,
-                repeatType === "weekly"
-                  ? styles.selectedButtonType
-                  : styles.unselectedButtonType,
-              ]}
-              onPress={() => setRepeatType("weekly")}
-            >
-              <Text
+              {/* Weekly */}
+              <TouchableOpacity
                 style={[
-                  styles.textButtonType,
+                  styles.buttonType,
                   repeatType === "weekly"
-                    ? styles.selectedTextButtonType
-                    : styles.unselectedTextButtonType,
+                    ? styles.selectedButtonType
+                    : styles.unselectedButtonType,
                 ]}
+                onPress={() => setRepeatType("weekly")}
               >
-                Mỗi Tuần
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.textButtonType,
+                    repeatType === "weekly"
+                      ? styles.selectedTextButtonType
+                      : styles.unselectedTextButtonType,
+                  ]}
+                >
+                  Mỗi Tuần
+                </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.buttonType,
-                repeatType === "monthly"
-                  ? styles.selectedButtonType
-                  : styles.unselectedButtonType,
-              ]}
-              onPress={() => setRepeatType("monthly")}
-            >
-              <Text
+              {/* Monthly */}
+              <TouchableOpacity
                 style={[
-                  styles.textButtonType,
+                  styles.buttonType,
                   repeatType === "monthly"
-                    ? styles.selectedTextButtonType
-                    : styles.unselectedTextButtonType,
+                    ? styles.selectedButtonType
+                    : styles.unselectedButtonType,
                 ]}
+                onPress={() => setRepeatType("monthly")}
               >
-                Mỗi Tháng
-              </Text>
-            </TouchableOpacity>
-          </View>
+                <Text
+                  style={[
+                    styles.textButtonType,
+                    repeatType === "monthly"
+                      ? styles.selectedTextButtonType
+                      : styles.unselectedTextButtonType,
+                  ]}
+                >
+                  Mỗi Tháng
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <View style={styles.horizontalLineContainer}>
             <View style={styles.horizontalLine} />
           </View>

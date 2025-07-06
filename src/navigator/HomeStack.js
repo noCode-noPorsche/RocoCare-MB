@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import SettingStack from "./SettingStack";
+import DetailCalendarScreen from "../screens/DetailCalendarScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,13 @@ function HomeStack() {
       <Stack.Screen
         name="Setting"
         component={SettingStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DetailCalendar"
+        component={DetailCalendarScreen}
         options={{
           headerShown: false,
         }}

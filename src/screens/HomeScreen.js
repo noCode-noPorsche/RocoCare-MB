@@ -1,18 +1,21 @@
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import moment from "moment";
 import { useContext, useState } from "react";
 import {
   Alert,
   Image,
-  Linking,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { Ionicons } from "react-native-vector-icons";
 import healthApi from "../apis/HealthApi";
+import robotApi from "../apis/Robot";
+import scheduleApi from "../apis/ScheduleApi";
 import BPIcon from "../assets/blood_pressure.svg";
 import CameraIcon from "../assets/camera_video.svg";
 import MHRIcon from "../assets/cardiology.svg";
@@ -21,11 +24,10 @@ import SPo2Icon from "../assets/spo2.svg";
 import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
 import TextDate from "../components/TextDate";
-import { AppContext } from "../context/AppContext";
-import HighlightCard from "../components/Test";
-import scheduleApi from "../apis/ScheduleApi";
-import moment from "moment";
 import TimeTableSchedule from "../components/TimeTableSchedule";
+import VitalsHeartRateChart from "../components/VitalsHeartRateChart";
+import VitalsOxygenChart from "../components/VitalsOxygenChart";
+import { AppContext } from "../context/AppContext";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -33,17 +35,26 @@ export default function HomeScreen() {
 
   const { profile, emergencyContacts } = useContext(AppContext);
 
-  const { data: userScheduleResult } = useQuery({
+  const { data: userScheduleResult, refetch: refetchSchedule } = useQuery({
     queryKey: ["user-schedule"],
     queryFn: () => scheduleApi.getSchedule({ pageSize: 100 }),
   });
 
   const filteredSchedule =
     userScheduleResult?.data?.data?.items?.filter((item) => {
-      const scheduleDate = moment(item.time); // giả sử field là `date`
+      const scheduleDate = moment(item.time);
       return scheduleDate.isSame(selectedDate, "day");
     }) || [];
-  console.log(filteredSchedule);
+  // console.log(filteredSchedule, "filter");
+  const callRobotMutation = useMutation({
+    mutationFn: (body) => robotApi.controlRobot(body),
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Đang thực hiện cuộc gọi!",
+      });
+    },
+  });
   const showConfirmAlert = () => {
     Alert.alert(
       "Xác nhận",
@@ -56,7 +67,9 @@ export default function HomeScreen() {
         },
         {
           text: "Đồng ý",
-          onPress: () => console.log("Đã đồng ý"),
+          onPress: () => {
+            // console.log(emergencyContacts.phoneNumber1, phone);
+          },
         },
       ],
       { cancelable: true }
@@ -76,8 +89,12 @@ export default function HomeScreen() {
         {
           text: "Gọi ngay",
           onPress: () => {
-            const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
-            Linking.openURL(`tel:${emergencyNumber}`);
+            callRobotMutation.mutate({
+              deviceSerial: profile.deviceToken,
+              command: `CALL ${emergencyContacts.phoneNumber1}`,
+            });
+            // const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
+            // Linking.openURL(`tel:${emergencyNumber}`);
           },
         },
       ],
@@ -85,12 +102,22 @@ export default function HomeScreen() {
     );
   };
 
-  const { data: healthMetricData } = useQuery({
+  const { data: healthMetricData, refetch: refetchHealth } = useQuery({
     queryKey: ["health"],
     queryFn: () => healthApi.getHealthInformation(),
   });
+  // console.log("healthMetricData", healthMetricData);
+  const resultHealthMetricData = healthMetricData?.data?.data.items;
+  // console.log(resultHealthMetricData, "ne ha");
 
   // console.log(healthMetricData.data.data.items[0]);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     refetchSchedule();
+  //     refetchHealth();
+  //   }, [refetchHealth, refetchSchedule])
+  // );
 
   return (
     <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -135,17 +162,36 @@ export default function HomeScreen() {
           hideNavigation={true}
         />
         {/* <TimeTableSchedule /> */}
-        {/* <TimeTableSchedule
-          selectedDate={selectedDate}
-          scheduleList={filteredSchedule}
-        /> */}
+        <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+          <TimeTableSchedule
+            selectedDate={selectedDate}
+            scheduleList={filteredSchedule}
+          />
+        </View>
       </View>
       <ScrollView
         vertical
         showsVerticalScrollIndicator={false}
         // contentContainerStyle={styles.viewCalendar}
       >
-        <HighlightCard />
+        {/* <VitalsChartCard data={healthMetricData.data.data.items} /> */}
+
+        {Array.isArray(resultHealthMetricData) &&
+          resultHealthMetricData.length > 0 && (
+            <VitalsHeartRateChart
+              data={resultHealthMetricData}
+              latestTime={resultHealthMetricData[0].recordedTime}
+              latestValue={resultHealthMetricData[0].heartRate}
+            />
+          )}
+        {Array.isArray(resultHealthMetricData) &&
+          resultHealthMetricData.length > 0 && (
+            <VitalsOxygenChart
+              data={resultHealthMetricData}
+              latestTime={resultHealthMetricData[0].recordedTime}
+              latestValue={resultHealthMetricData[0].oxygenLevel}
+            />
+          )}
         <View style={styles.viewHealthInformation}>
           <View style={styles.viewButtonHealth}>
             <TouchableOpacity style={styles.buttonHealth}>

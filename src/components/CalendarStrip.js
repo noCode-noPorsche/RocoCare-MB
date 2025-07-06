@@ -175,9 +175,9 @@ export default function CalendarStrip({
           </TouchableOpacity>
         )}
       </View>
-      {!hideTimeTableSchedule && (
+      {/* {!hideTimeTableSchedule && (
         <TimeTableSchedule selectedDate={selectedDate} />
-      )}
+      )} */}
     </View>
   );
 }

@@ -68,6 +68,7 @@ function MyBottomTabs() {
             "Notification",
             "Setting",
             "AnotherHomeScreen",
+            "DetailCalendar",
           ]),
         })}
       />
