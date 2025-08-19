@@ -49,11 +49,19 @@
     <true/>
     <key>NSAppTransportSecurity</key>
     <dict>
-      <key>NSAllowsArbitraryLoads</key>
-      <false/>
-      <key>NSAllowsLocalNetworking</key>
+    <key>NSExceptionDomains</key>
+    <dict>
+    <key>1.54.222.139</key>
+    <dict>
+      <key>NSIncludesSubdomains</key>
       <true/>
+      <key>NSExceptionAllowsInsecureHTTPLoads</key>
+      <true/>
+      <key>NSExceptionRequiresForwardSecrecy</key>
+      <false/>
     </dict>
+  </dict>
+</dict>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

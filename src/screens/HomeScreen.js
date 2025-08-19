@@ -93,6 +93,7 @@ export default function HomeScreen() {
               deviceSerial: profile.deviceToken,
               command: `CALL ${emergencyContacts.phoneNumber1}`,
             });
+            console.log(emergencyContacts.phoneNumber1);
             // const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
             // Linking.openURL(`tel:${emergencyNumber}`);
           },
@@ -232,7 +233,10 @@ export default function HomeScreen() {
               </View>
               <TextDate day="Chủ nhật" date="18/5" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonHealth}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Robot")}
+              style={styles.buttonHealth}
+            >
               <Text style={styles.textNameHealth}>Camera RoboCare</Text>
               <View style={styles.viewTextHealth}>
                 <CameraIcon width={30} height={30} />

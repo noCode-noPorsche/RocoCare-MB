@@ -1,4 +1,4 @@
-package com.anonymous.RoboCareMB
+package com.robocare
 
 import android.app.Application
 import android.content.res.Configuration

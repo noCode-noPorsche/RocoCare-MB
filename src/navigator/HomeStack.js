@@ -3,6 +3,7 @@ import HomeScreen from "../screens/HomeScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import SettingStack from "./SettingStack";
 import DetailCalendarScreen from "../screens/DetailCalendarScreen";
+import RobotScreen from "../screens/RobotScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,13 @@ function HomeStack() {
       <Stack.Screen
         name="DetailCalendar"
         component={DetailCalendarScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Robot"
+        component={RobotScreen}
         options={{
           headerShown: false,
         }}
