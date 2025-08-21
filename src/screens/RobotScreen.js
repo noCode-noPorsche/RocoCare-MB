@@ -13,7 +13,7 @@ import { WebView } from "react-native-webview";
 import { useMutation } from "@tanstack/react-query";
 import { AppContext } from "../context/AppContext";
 import CallEmergencyIcon from "../assets/emergency_call.svg";
-import robotApi from "../apis/Robot";
+import robotApi from "../apis/RobotApi";
 import Toast from "react-native-toast-message";
 
 export default function RobotScreen() {
@@ -27,16 +27,25 @@ export default function RobotScreen() {
     onSuccess: () => {
       Toast.show({
         type: "success",
-        text1: "Đang thực hiện cuộc gọi!",
+        text1: "Lệnh đã được gửi tới robot!",
       });
     },
   });
 
-  const controlRobot = (direction) => {
-    console.log(`Điều khiển robot: ${direction}`);
+  const handleControlRobot = (direction, isCall = false) => {
+    let command = direction;
+
+    if (isCall) {
+      // Nếu là gọi khẩn cấp thì thêm CALL
+      command = `CALL ${direction}`;
+    }
+    console.log("nice", emergencyContacts.phoneNumber1);
+
+    console.log(`Gửi command tới robot: ${command}`);
+
     callRobotMutation.mutate({
       deviceSerial: profile.deviceToken,
-      command: direction,
+      command: command,
     });
   };
 
@@ -53,7 +62,7 @@ export default function RobotScreen() {
         {
           text: "Đồng ý",
           onPress: () => {
-            // console.log(emergencyContacts.phoneNumber1, phone);
+            handleControlRobot(emergencyContacts.phoneNumber1, true);
           },
         },
       ],
@@ -61,31 +70,31 @@ export default function RobotScreen() {
     );
   };
 
-  const showConfirmAlertCall = () => {
-    Alert.alert(
-      "Xác nhận gọi khẩn cấp",
-      "Bạn có chắc chắn muốn gọi đến số khẩn cấp?",
-      [
-        {
-          text: "Hủy",
-          onPress: () => console.log("Đã hủy cuộc gọi"),
-          style: "cancel",
-        },
-        {
-          text: "Gọi ngay",
-          onPress: () => {
-            callRobotMutation.mutate({
-              deviceSerial: profile.deviceToken,
-              command: `CALL ${emergencyContacts.phoneNumber1}`,
-            });
-            // const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
-            // Linking.openURL(`tel:${emergencyNumber}`);
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  // const showConfirmAlertCall = () => {
+  //   Alert.alert(
+  //     "Xác nhận gọi khẩn cấp",
+  //     "Bạn có chắc chắn muốn gọi đến số khẩn cấp?",
+  //     [
+  //       {
+  //         text: "Hủy",
+  //         onPress: () => console.log("Đã hủy cuộc gọi"),
+  //         style: "cancel",
+  //       },
+  //       {
+  //         text: "Gọi ngay",
+  //         onPress: () => {
+  //           callRobotMutation.mutate({
+  //             deviceSerial: profile.deviceToken,
+  //             command: `CALL ${emergencyContacts.phoneNumber1}`,
+  //           });
+  //           // const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
+  //           // Linking.openURL(`tel:${emergencyNumber}`);
+  //         },
+  //       },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
 
   return (
     <SafeAreaViewCustom>
@@ -100,26 +109,17 @@ export default function RobotScreen() {
         ) : (
           <>
             {loading && (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#007AFF" />
-                <Text style={styles.loadingText}>Đang kết nối robot...</Text>
-              </View>
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                style={{ position: "absolute", top: "50%", left: "50%" }}
+              />
             )}
             <WebView
               source={{ uri: "http://1.54.222.139:9000/video_feed" }}
-              style={styles.webview}
-              allowsInlineMediaPlayback
-              mediaPlaybackRequiresUserAction={false}
               onLoadStart={() => setLoading(true)}
-              onLoadEnd={() => setLoading(false)}
-              onError={() => {
-                setHasError(true);
-                setLoading(false);
-              }}
-              onHttpError={() => {
-                setHasError(true);
-                setLoading(false);
-              }}
+              onLoad={() => setLoading(false)} // sẽ chạy ngay khi bắt đầu render frame
+              onError={() => setLoading(false)} // phòng khi lỗi
             />
           </>
         )}
@@ -127,7 +127,7 @@ export default function RobotScreen() {
         <View style={styles.controlsContainer}>
           <TouchableOpacity
             style={[styles.controlButton, styles.up]}
-            onPress={() => controlRobot("F")}
+            onPress={() => handleControlRobot("F")}
           >
             <Text style={styles.controlText}>↑</Text>
           </TouchableOpacity>
@@ -135,21 +135,21 @@ export default function RobotScreen() {
           <View style={styles.middleRow}>
             <TouchableOpacity
               style={[styles.controlButton, styles.left]}
-              onPress={() => controlRobot("L")}
+              onPress={() => handleControlRobot("L")}
             >
               <Text style={styles.controlText}>←</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.controlButton, styles.right]}
-              onPress={() => controlRobot("R")}
+              onPress={() => handleControlRobot("R")}
             >
               <Text style={styles.controlText}>→</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={[styles.controlButton, styles.down]}
-            onPress={() => controlRobot("B")}
+            onPress={() => handleControlRobot("B")}
           >
             <Text style={styles.controlText}>↓</Text>
           </TouchableOpacity>
@@ -163,7 +163,7 @@ export default function RobotScreen() {
       >
         <Text style={styles.floatingButtonText}>
           <CallEmergencyIcon
-            onPress={showConfirmAlertCall}
+            onPress={showConfirmAlert}
             width={30}
             height={30}
           />

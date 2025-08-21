@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import {
   Alert,
   Image,
@@ -14,26 +14,32 @@ import {
 import Toast from "react-native-toast-message";
 import { Ionicons } from "react-native-vector-icons";
 import healthApi from "../apis/HealthApi";
-import robotApi from "../apis/Robot";
+import robotApi from "../apis/RobotApi";
 import scheduleApi from "../apis/ScheduleApi";
-import BPIcon from "../assets/blood_pressure.svg";
+// import BPIcon from "../assets/blood_pressure.svg";
 import CameraIcon from "../assets/camera_video.svg";
-import MHRIcon from "../assets/cardiology.svg";
+// import MHRIcon from "../assets/cardiology.svg";
 import CallEmergencyIcon from "../assets/emergency_call.svg";
-import SPo2Icon from "../assets/spo2.svg";
+// import SPo2Icon from "../assets/spo2.svg";
 import CalendarStrip from "../components/CalendarStrip";
 import SafeAreaViewCustom from "../components/SafeAreaViewCustom";
-import TextDate from "../components/TextDate";
+// import TextDate from "../components/TextDate";
 import TimeTableSchedule from "../components/TimeTableSchedule";
 import VitalsHeartRateChart from "../components/VitalsHeartRateChart";
 import VitalsOxygenChart from "../components/VitalsOxygenChart";
 import { AppContext } from "../context/AppContext";
+import emergencyCallApi from "../apis/EmergencyCallApi";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState(moment());
+  const { profile, emergencyContacts, setEmergencyContacts } =
+    useContext(AppContext);
 
-  const { profile, emergencyContacts } = useContext(AppContext);
+  const { data: emergencyCallData, refetch: refetchPhone } = useQuery({
+    queryKey: ["emergency-call"],
+    queryFn: () => emergencyCallApi.getEmergencyCall(),
+  });
 
   const { data: userScheduleResult, refetch: refetchSchedule } = useQuery({
     queryKey: ["user-schedule"],
@@ -45,7 +51,7 @@ export default function HomeScreen() {
       const scheduleDate = moment(item.time);
       return scheduleDate.isSame(selectedDate, "day");
     }) || [];
-  // console.log(filteredSchedule, "filter");
+
   const callRobotMutation = useMutation({
     mutationFn: (body) => robotApi.controlRobot(body),
     onSuccess: () => {
@@ -55,26 +61,26 @@ export default function HomeScreen() {
       });
     },
   });
-  const showConfirmAlert = () => {
-    Alert.alert(
-      "Xác nhận",
-      "Bạn có chắc chắn muốn thực hiện hành động này?",
-      [
-        {
-          text: "Hủy",
-          onPress: () => console.log("Đã hủy"),
-          style: "cancel",
-        },
-        {
-          text: "Đồng ý",
-          onPress: () => {
-            // console.log(emergencyContacts.phoneNumber1, phone);
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  // const showConfirmAlert = () => {
+  //   Alert.alert(
+  //     "Xác nhận",
+  //     "Bạn có chắc chắn muốn thực hiện hành động này?",
+  //     [
+  //       {
+  //         text: "Hủy",
+  //         onPress: () => console.log("Đã hủy"),
+  //         style: "cancel",
+  //       },
+  //       {
+  //         text: "Đồng ý",
+  //         onPress: () => {
+  //           // console.log(emergencyContacts.phoneNumber1, phone);
+  //         },
+  //       },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
 
   const showConfirmAlertCall = () => {
     Alert.alert(
@@ -94,8 +100,6 @@ export default function HomeScreen() {
               command: `CALL ${emergencyContacts.phoneNumber1}`,
             });
             console.log(emergencyContacts.phoneNumber1);
-            // const emergencyNumber = emergencyContacts.phoneNumber1; // Thay đổi theo nhu cầu
-            // Linking.openURL(`tel:${emergencyNumber}`);
           },
         },
       ],
@@ -113,12 +117,17 @@ export default function HomeScreen() {
 
   // console.log(healthMetricData.data.data.items[0]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     refetchSchedule();
-  //     refetchHealth();
-  //   }, [refetchHealth, refetchSchedule])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      refetchSchedule();
+      refetchHealth();
+      refetchPhone();
+      setEmergencyContacts({
+        phoneNumber1: emergencyCallData?.data?.data?.phoneNumber1,
+        phoneNumber2: emergencyCallData?.data?.data?.phoneNumber2,
+      });
+    }, [refetchHealth, refetchSchedule])
+  );
 
   return (
     <SafeAreaViewCustom style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -194,7 +203,7 @@ export default function HomeScreen() {
             />
           )}
         <View style={styles.viewHealthInformation}>
-          <View style={styles.viewButtonHealth}>
+          {/* <View style={styles.viewButtonHealth}>
             <TouchableOpacity style={styles.buttonHealth}>
               <Text style={styles.textNameHealth}>Chỉ số nhịp tim (MHR)</Text>
               <View style={styles.viewTextHealth}>
@@ -216,9 +225,9 @@ export default function HomeScreen() {
               </View>
               <TextDate day="Chủ nhật" date="18/5" />
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={styles.viewButtonHealth}>
-            <TouchableOpacity style={styles.buttonHealth}>
+            {/* <TouchableOpacity style={styles.buttonHealth}>
               <Text style={styles.textNameHealth}>
                 Chỉ số Oxy trong máu (SpO2)
               </Text>
@@ -232,7 +241,7 @@ export default function HomeScreen() {
                 </Text>
               </View>
               <TextDate day="Chủ nhật" date="18/5" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               onPress={() => navigation.navigate("Robot")}
               style={styles.buttonHealth}
@@ -242,7 +251,7 @@ export default function HomeScreen() {
                 <CameraIcon width={30} height={30} />
                 <Text style={styles.textHealthIndex}>Live</Text>
               </View>
-              <TextDate day="Chủ nhật" date="18/5" />
+              {/* <TextDate day="Chủ nhật" date="18/5" /> */}
             </TouchableOpacity>
           </View>
         </View>
@@ -250,7 +259,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
-          showConfirmAlert();
+          showConfirmAlertCall();
         }}
       >
         <Text style={styles.floatingButtonText}>

@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.robocare'
+    namespace 'com.anonymous.RoboCareMB'
     defaultConfig {
-        applicationId 'com.robocare'
+        applicationId 'com.anonymous.RoboCareMB'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
