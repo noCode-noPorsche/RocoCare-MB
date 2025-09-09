@@ -4,11 +4,11 @@
     "slug": "RoboCare-MB",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/robocare-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/robocare-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -40,6 +40,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3c13c7db-e593-446b-bca4-96bbd933c4c9"
+      }
+    }
   }
 }

@@ -69,6 +69,7 @@ function MyBottomTabs() {
             "Setting",
             "AnotherHomeScreen",
             "DetailCalendar",
+            "Robot",
           ]),
         })}
       />
